@@ -61,17 +61,19 @@ import org.ros.node.NodeMainExecutor;
 
 public class ExerciseActivity extends RosActivity implements SensorEventListener {
 
+    public enum ProgramStatus {
+        PLAYBACK, EXERCISING, STUCK_AT_STAGE, COMPLETE
+    }
+
     private GLSurfaceView mGLView;
     private final MyRenderer renderer = new MyRenderer();
-    private World world = null;
 
+    private World world = null;
+    private AnimatedGroup actor;
+    private SkeletonHelper skeletonHelper;
     private CameraOrbitController cameraController;
 
     private PowerManager.WakeLock wakeLock;
-
-    private AnimatedGroup actor;
-
-    private SkeletonHelper skeletonHelper;
 
     //Sensor-data variables for camera tilt
     private SensorManager mSensorManager;
@@ -82,11 +84,12 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
     //data buffers for camera tilt
     Matrix baseCameraRotation, cameraRotation, camBasePose;
 
-    /*** ROS STUFF ***/
+    /* the rotational matrix for the shoulder, necessary to properly position the elbow with the myo */
+    Matrix RShoulderRot;
 
+    /*** ROS STUFF ***/
     private MyoSubscriber myoSub;
 
-    Matrix RShoulderRot;
 
     public ExerciseActivity() {
         super("exercisedetector", "exercisedetector");
@@ -119,7 +122,8 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
         super.onCreate(savedInstanceState);
 
         mGLView = new GLSurfaceView(getApplication());
-//        setContentView(mGLView);
+        //setContentView(new LoadingView(getApplicationContext()));
+        setContentView(mGLView);
 
         mGLView.setEGLConfigChooser(new GLSurfaceView.EGLConfigChooser() {
             public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
@@ -171,6 +175,9 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
         initializeModelPose();
     }
 
+    /**
+     * Puts the actor in a more natural pose
+     */
     void initializeModelPose() {
 
         RShoulderRot = new Matrix();

@@ -31,7 +31,12 @@ public class StateSubscriber implements NodeMain {
         allStateSubscriber.addMessageListener(new MessageListener<geometry_msgs.Quaternion>() {
             @Override
             public void onNewMessage(geometry_msgs.Quaternion msg) {
-                stateOrientations.add(MyoSubscriber.myoToMat(msg));
+                if(MyoHelper.isEndingQuat(msg)) {
+                    //Alert the activity
+                } else {
+                    stateOrientations.add(MyoHelper.myoToMat(msg));
+                }
+
             }
         });
 
@@ -39,7 +44,7 @@ public class StateSubscriber implements NodeMain {
         stateChangedSubscriber.addMessageListener(new MessageListener<geometry_msgs.Quaternion>() {
             @Override
             public void onNewMessage(geometry_msgs.Quaternion msg) {
-                currentState = MyoSubscriber.myoToMat(msg);
+                currentState = MyoHelper.myoToMat(msg);
             }
         });
     }

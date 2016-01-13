@@ -28,11 +28,23 @@ public class MyoSubscriber implements NodeMain {
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
-        Subscriber<geometry_msgs.Quaternion> subscriber = connectedNode.newSubscriber("/myo/ort", geometry_msgs.Quaternion._TYPE);
-        subscriber.addMessageListener(new MessageListener<geometry_msgs.Quaternion>() {
+        Subscriber<geometry_msgs.Quaternion> raw_myo_sub = connectedNode.newSubscriber("/myo/ort", geometry_msgs.Quaternion._TYPE);
+        raw_myo_sub.addMessageListener(new MessageListener<geometry_msgs.Quaternion>() {
             @Override
             public void onNewMessage(geometry_msgs.Quaternion msg) {
-                housingActivity.update(myoToMat(msg), 11);
+                housingActivity.update(MyoHelper.myoToMat(msg), 11);
+            }
+        });
+
+        Subscriber<geometry_msgs.Quaternion> playback_sub = connectedNode.newSubscriber("/myo/ort", geometry_msgs.Quaternion._TYPE);
+        playback_sub.addMessageListener(new MessageListener<geometry_msgs.Quaternion>() {
+            @Override
+            public void onNewMessage(geometry_msgs.Quaternion msg) {
+                if(MyoHelper.isEndingQuat(msg)) {
+                    //Alert the activity
+                } else {
+                    housingActivity.update(MyoHelper.myoToMat(msg), 11);
+                }
             }
         });
     }
@@ -57,18 +69,4 @@ public class MyoSubscriber implements NodeMain {
         return GraphName.of("exercise_myo_sub");
     }
 
-    public static Matrix myoToMat(geometry_msgs.Quaternion msg) {
-
-        Quaternion quat = new Quaternion();
-
-        //old ninja way
-        //quat.set(-(float)msg.getZ(), (float)msg.getX(),
-        //    -(float)msg.getY(), (float)msg.getW());
-
-        quat.set((float) msg.getX(), -(float) msg.getZ(), (float) msg.getY(), (float) msg.getW());
-        Matrix m = quat.getRotationMatrix();
-        m.rotateY(-(float)Math.PI/2);
-
-        return m;
-    }
 }
