@@ -2,25 +2,11 @@
 <items version="2" >
 
     <item
-        jar="/home/chris/.gradle/caches/modules-2/files-2.1/commons-pool/commons-pool/1.6/4572d589699f09d866a226a14b7f4323c6d8f040/commons-pool-1.6.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="4572d589699f09d866a226a14b7f4323c6d8f040">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/commons-pool-1.6-ca9543d74eeaacbd6bbb30a3f840d0a739f9f5d8.jar" />
-    </item>
-    <item
         jar="/home/chris/.gradle/caches/modules-2/files-2.1/org.apache.commons/com.springsource.org.apache.commons.io/1.4.0/51097cd000ec88214ff181c9f059947de1cf4a35/com.springsource.org.apache.commons.io-1.4.0.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="51097cd000ec88214ff181c9f059947de1cf4a35">
         <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/com.springsource.org.apache.commons.io-1.4.0-a6e3cf0768261b9306c93d1847c38fad6d734f67.jar" />
-    </item>
-    <item
-        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/sensor_msgs/1.11.8/sensor_msgs-1.11.8.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="6d4c54fef62b4e20cdd6764b8fed5761be585bde">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/sensor_msgs-1.11.8-e249aa13b919cf08e31dcccfed03a395bd392ab9.jar" />
     </item>
     <item
         jar="/home/chris/.gradle/caches/modules-2/files-2.1/org.apache.commons/com.springsource.org.apache.commons.codec/1.3.0/a7c156ef67bdc69ae36a9c70adf7b8ca2633132c/com.springsource.org.apache.commons.codec-1.3.0.jar"
@@ -30,20 +16,6 @@
         <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/com.springsource.org.apache.commons.codec-1.3.0-514de94298c5cd088dc753560956eafa0332bb48.jar" />
     </item>
     <item
-        jar="/home/chris/.gradle/caches/modules-2/files-2.1/org.apache.commons/com.springsource.org.apache.commons.httpclient/3.1.0/c493a925a091ac3d8f449d9265fe12482dabb2a7/com.springsource.org.apache.commons.httpclient-3.1.0.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="c493a925a091ac3d8f449d9265fe12482dabb2a7">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/com.springsource.org.apache.commons.httpclient-3.1.0-351f1b6388374cec426b9237b974d68dd36132bc.jar" />
-    </item>
-    <item
-        jar="/home/chris/.gradle/caches/modules-2/files-2.1/dnsjava/dnsjava/2.1.1/5708df81cf6dbff545695f0be6380b7bbc85accc/dnsjava-2.1.1.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="5708df81cf6dbff545695f0be6380b7bbc85accc">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/dnsjava-2.1.1-bd811bd3ff002891e0536dd41bd55f90e926c514.jar" />
-    </item>
-    <item
         jar="/opt/ros/indigo/share/maven/org/ros/rosjava_core/apache_xmlrpc_server/0.2.1/apache_xmlrpc_server-0.2.1.jar"
         jumboMode="false"
         revision="21.1.2"
@@ -51,18 +23,18 @@
         <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/apache_xmlrpc_server-0.2.1-e5da805a3828026b03007594e6df72211c293c30.jar" />
     </item>
     <item
-        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/tf2_msgs/0.5.12/tf2_msgs-0.5.12.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="082eaeb281979bcf074f2195b06ad191b44151ac">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/tf2_msgs-0.5.12-fff269c9b754caca76a04898579a2818bc3ae38a.jar" />
-    </item>
-    <item
         jar="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/libs/ardor-collada-0.7-beta.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="616ea2b1433dd86d13b4db81427079525275f6ec">
         <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/ardor-collada-0.7-beta-712918746f9db5b859a9d0fcf6ca634eece59d2f.jar" />
+    </item>
+    <item
+        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/tf2_msgs/0.5.12/tf2_msgs-0.5.12.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="082eaeb281979bcf074f2195b06ad191b44151ac">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/tf2_msgs-0.5.12-fff269c9b754caca76a04898579a2818bc3ae38a.jar" />
     </item>
     <item
         jar="/opt/ros/indigo/share/maven/org/ros/rosjava_core/apache_xmlrpc_client/0.2.1/apache_xmlrpc_client-0.2.1.jar"
@@ -77,13 +49,6 @@
         revision="21.1.2"
         sha1="c6d8a3d55051f77218b87b257cdeea47d2eca638">
         <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/gradle_plugins-0.2.1-3ca41087091e8a6d62524f61103437f41ca87422.jar" />
-    </item>
-    <item
-        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/rosgraph_msgs/1.11.1/rosgraph_msgs-1.11.1.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="c095eac5510c1b270c8c82f3ea9fe17b39221dd3">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/rosgraph_msgs-1.11.1-102a43faf9239eba7bc0d4da46cd8f62b5151902.jar" />
     </item>
     <item
         jar="/opt/ros/indigo/share/maven/org/ros/rosjava_core/apache_xmlrpc_common/0.2.1/apache_xmlrpc_common-0.2.1.jar"
@@ -107,20 +72,6 @@
         <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/netty-3.5.2.Final-69219a48280a8ee6505a13b7803419feafbe4d2a.jar" />
     </item>
     <item
-        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/rosjava_test_msgs/0.2.1/rosjava_test_msgs-0.2.1.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="d51c26ebd8ac0f0a1d2428d1c89f2cec60477c95">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/rosjava_test_msgs-0.2.1-79f0c39bd149095bd35adfbbcad8f8beca405898.jar" />
-    </item>
-    <item
-        jar="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/libs/bones.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="86642d0691973a2e88004cac415013d90a60f7c9">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/bones-e751ea857c56db74501be8731db124393b4d9388.jar" />
-    </item>
-    <item
         jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/geometry_msgs/1.11.8/geometry_msgs-1.11.8.jar"
         jumboMode="false"
         revision="21.1.2"
@@ -142,25 +93,11 @@
         <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/visualization_msgs-1.11.8-5c5ec4815d99645e6d6588e48c8fa6b735e97cc2.jar" />
     </item>
     <item
-        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_core/rosjava_geometry/0.2.1/rosjava_geometry-0.2.1.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="d2f3e25af4c503d2b09eac2b01edda207bc6c24c">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/rosjava_geometry-0.2.1-eee5b8eb9aff1c86d83ab461fbb9b6470b0e7036.jar" />
-    </item>
-    <item
         jar="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/libs/internal_impl-21.0.3.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
         <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-81d366a7200f04b34f492f65fa1d0a041897ac71.jar" />
-    </item>
-    <item
-        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/actionlib_msgs/1.11.8/actionlib_msgs-1.11.8.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="f5fce1702a3aecd7da0aaf29898bd5cdea150797">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/actionlib_msgs-1.11.8-b6c79f0a5049ceba3686f115fdbd262a85d2b997.jar" />
     </item>
     <item
         jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/nav_msgs/1.11.8/nav_msgs-1.11.8.jar"
@@ -184,6 +121,13 @@
         <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/classes-ff10839f7322acb0862c10214abfbc0898a82c43.jar" />
     </item>
     <item
+        jar="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/libs/jpct_ae-1.29.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="be484d9a9b9b8af7b11ebb79b0b6d74757fcd7ed">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/jpct_ae-1.29-d4821e08d435cf11a706015d89ff15212d62f2e4.jar" />
+    </item>
+    <item
         jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/diagnostic_msgs/1.11.8/diagnostic_msgs-1.11.8.jar"
         jumboMode="false"
         revision="21.1.2"
@@ -191,11 +135,102 @@
         <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/diagnostic_msgs-1.11.8-68a23d714b0ba367244f6e2115ddd77de4d75a5f.jar" />
     </item>
     <item
-        jar="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/libs/jpct_ae-1.29.jar"
+        jar="/home/chris/.gradle/caches/modules-2/files-2.1/org.apache.commons/com.springsource.org.apache.commons.lang/2.4.0/686e3713650c8e3a5d98723b4d3e239586bf9822/com.springsource.org.apache.commons.lang-2.4.0.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="be484d9a9b9b8af7b11ebb79b0b6d74757fcd7ed">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/jpct_ae-1.29-d4821e08d435cf11a706015d89ff15212d62f2e4.jar" />
+        sha1="686e3713650c8e3a5d98723b4d3e239586bf9822">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/com.springsource.org.apache.commons.lang-2.4.0-a728cf89e5dfce430409068c1b92b579747282b3.jar" />
+    </item>
+    <item
+        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_core/rosjava/0.2.1/rosjava-0.2.1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="9b2e280511ca7e4b8cf71acea21ba0180bbf9be8">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/rosjava-0.2.1-139757dca4420b88958c253eaa34d137c1a26f40.jar" />
+    </item>
+    <item
+        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/std_msgs/0.5.9/std_msgs-0.5.9.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="36e76164a4dc088278bb37b8db41959674ca0676">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/std_msgs-0.5.9-eabb27de588bfce3d5b8133b1b43ef89991637bc.jar" />
+    </item>
+    <item
+        jar="/home/chris/.gradle/caches/modules-2/files-2.1/org.apache.ws.commons/ws-commons-util/1.0.1/126e80ff798fece634bc94e61f8be8a8da00be60/ws-commons-util-1.0.1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="126e80ff798fece634bc94e61f8be8a8da00be60">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/ws-commons-util-1.0.1-f628d2aafb531ceca9e3dfd3133f94f3676f80be.jar" />
+    </item>
+    <item
+        jar="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/exploded-aar/com.github.rosjava.android_extras/gingerbread/0.2.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="ecfb222ab5e32d99c0cfc0f0dbf48cb3927add0e">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/classes-783d67696b0b2fb03bd5144b5f34f62be3cbe46e.jar" />
+    </item>
+    <item
+        jar="/home/chris/.gradle/caches/modules-2/files-2.1/commons-pool/commons-pool/1.6/4572d589699f09d866a226a14b7f4323c6d8f040/commons-pool-1.6.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="4572d589699f09d866a226a14b7f4323c6d8f040">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/commons-pool-1.6-ca9543d74eeaacbd6bbb30a3f840d0a739f9f5d8.jar" />
+    </item>
+    <item
+        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/sensor_msgs/1.11.8/sensor_msgs-1.11.8.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="6d4c54fef62b4e20cdd6764b8fed5761be585bde">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/sensor_msgs-1.11.8-e249aa13b919cf08e31dcccfed03a395bd392ab9.jar" />
+    </item>
+    <item
+        jar="/home/chris/.gradle/caches/modules-2/files-2.1/org.apache.commons/com.springsource.org.apache.commons.httpclient/3.1.0/c493a925a091ac3d8f449d9265fe12482dabb2a7/com.springsource.org.apache.commons.httpclient-3.1.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="c493a925a091ac3d8f449d9265fe12482dabb2a7">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/com.springsource.org.apache.commons.httpclient-3.1.0-351f1b6388374cec426b9237b974d68dd36132bc.jar" />
+    </item>
+    <item
+        jar="/home/chris/.gradle/caches/modules-2/files-2.1/dnsjava/dnsjava/2.1.1/5708df81cf6dbff545695f0be6380b7bbc85accc/dnsjava-2.1.1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="5708df81cf6dbff545695f0be6380b7bbc85accc">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/dnsjava-2.1.1-bd811bd3ff002891e0536dd41bd55f90e926c514.jar" />
+    </item>
+    <item
+        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/rosgraph_msgs/1.11.1/rosgraph_msgs-1.11.1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="c095eac5510c1b270c8c82f3ea9fe17b39221dd3">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/rosgraph_msgs-1.11.1-102a43faf9239eba7bc0d4da46cd8f62b5151902.jar" />
+    </item>
+    <item
+        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/rosjava_test_msgs/0.2.1/rosjava_test_msgs-0.2.1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="d51c26ebd8ac0f0a1d2428d1c89f2cec60477c95">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/rosjava_test_msgs-0.2.1-79f0c39bd149095bd35adfbbcad8f8beca405898.jar" />
+    </item>
+    <item
+        jar="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/libs/bones.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="86642d0691973a2e88004cac415013d90a60f7c9">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/bones-e751ea857c56db74501be8731db124393b4d9388.jar" />
+    </item>
+    <item
+        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_core/rosjava_geometry/0.2.1/rosjava_geometry-0.2.1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="d2f3e25af4c503d2b09eac2b01edda207bc6c24c">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/rosjava_geometry-0.2.1-eee5b8eb9aff1c86d83ab461fbb9b6470b0e7036.jar" />
+    </item>
+    <item
+        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/actionlib_msgs/1.11.8/actionlib_msgs-1.11.8.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="f5fce1702a3aecd7da0aaf29898bd5cdea150797">
+        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/actionlib_msgs-1.11.8-b6c79f0a5049ceba3686f115fdbd262a85d2b997.jar" />
     </item>
     <item
         jar="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/exploded-aar/org.ros.android_core/android_10/0.2.0/classes.jar"
@@ -219,13 +254,6 @@
         <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-1cd1039154f1bb9cc0d4a9da3e8b7ec509fd8b06.jar" />
     </item>
     <item
-        jar="/home/chris/.gradle/caches/modules-2/files-2.1/org.apache.commons/com.springsource.org.apache.commons.lang/2.4.0/686e3713650c8e3a5d98723b4d3e239586bf9822/com.springsource.org.apache.commons.lang-2.4.0.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="686e3713650c8e3a5d98723b4d3e239586bf9822">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/com.springsource.org.apache.commons.lang-2.4.0-a728cf89e5dfce430409068c1b92b579747282b3.jar" />
-    </item>
-    <item
         jar="/opt/ros/indigo/share/maven/org/ros/rosjava_bootstrap/message_generation/0.2.1/message_generation-0.2.1.jar"
         jumboMode="false"
         revision="21.1.2"
@@ -233,39 +261,11 @@
         <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/message_generation-0.2.1-2fba721c439e2b4d341c253db8ea70791bb6d064.jar" />
     </item>
     <item
-        jar="/home/chris/.gradle/caches/modules-2/files-2.1/org.apache.ws.commons/ws-commons-util/1.0.1/126e80ff798fece634bc94e61f8be8a8da00be60/ws-commons-util-1.0.1.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="126e80ff798fece634bc94e61f8be8a8da00be60">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/ws-commons-util-1.0.1-f628d2aafb531ceca9e3dfd3133f94f3676f80be.jar" />
-    </item>
-    <item
-        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_messages/std_msgs/0.5.9/std_msgs-0.5.9.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="36e76164a4dc088278bb37b8db41959674ca0676">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/std_msgs-0.5.9-eabb27de588bfce3d5b8133b1b43ef89991637bc.jar" />
-    </item>
-    <item
-        jar="/opt/ros/indigo/share/maven/org/ros/rosjava_core/rosjava/0.2.1/rosjava-0.2.1.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="9b2e280511ca7e4b8cf71acea21ba0180bbf9be8">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/rosjava-0.2.1-139757dca4420b88958c253eaa34d137c1a26f40.jar" />
-    </item>
-    <item
         jar="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/libs/ardor-core-0.7-beta.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="e0cc4aa85c35ef280d64abeae19b541a81ae9170">
         <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/ardor-core-0.7-beta-8370203b8052dd3cd0400ea30becaaad36d4748f.jar" />
-    </item>
-    <item
-        jar="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/exploded-aar/com.github.rosjava.android_extras/gingerbread/0.2.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="ecfb222ab5e32d99c0cfc0f0dbf48cb3927add0e">
-        <dex dex="/home/chris/indigo/rja_test/jordan_sony_ws/src/exercisedetector/myapplication/build/intermediates/pre-dexed/debug/classes-783d67696b0b2fb03bd5144b5f34f62be3cbe46e.jar" />
     </item>
     <item
         jar="/home/chris/.gradle/caches/modules-2/files-2.1/org.apache.commons/com.springsource.org.apache.commons.logging/1.1.1/7657caf2c78e1d79c74d36f2ae128a115f7cc180/com.springsource.org.apache.commons.logging-1.1.1.jar"

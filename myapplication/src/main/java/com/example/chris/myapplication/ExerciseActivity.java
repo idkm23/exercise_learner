@@ -2,12 +2,9 @@ package com.example.chris.myapplication;
 
 import bones.samples.android.CameraOrbitController;
 import bones.samples.android.SkeletonHelper;
-import glfont.GLFont;
 import edu.uml.odgboxtherapy.R;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -17,39 +14,22 @@ import javax.microedition.khronos.opengles.GL10;
 import raft.jpct.bones.Animated3D;
 import raft.jpct.bones.AnimatedGroup;
 import raft.jpct.bones.BonesIO;
-import raft.jpct.bones.Quaternion;
-import raft.jpct.bones.SkeletonPose;
-import raft.jpct.bones.SkinClip;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.SubMenu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
-import com.threed.jpct.Animation;
-import com.threed.jpct.Camera;
 import com.threed.jpct.Config;
 import com.threed.jpct.FrameBuffer;
-import com.threed.jpct.Interact2D;
 import com.threed.jpct.Light;
 import com.threed.jpct.Logger;
 import com.threed.jpct.Matrix;
-import com.threed.jpct.Mesh;
-import com.threed.jpct.RGBColor;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.Texture;
 import com.threed.jpct.TextureManager;
@@ -59,12 +39,21 @@ import org.ros.android.RosActivity;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
 
-public class ExerciseActivity extends RosActivity implements SensorEventListener {
+public class ExerciseActivity extends RosActivity {
 
-    public enum ProgramStatus {
-        PLAYBACK, EXERCISING, STUCK_AT_STAGE, COMPLETE
+    protected enum ProgramStatus {
+        PLAYBACK, PLAY2EXER, EXERCISING, STUCK_AT_STAGE, COMPLETE
     }
 
+    private ProgramStatus programStatus = ProgramStatus.PLAYBACK;
+
+    private static ExerciseActivity instance;
+
+    public static ExerciseActivity getInstance() {
+        return instance;
+    }
+
+    private TextOverlay txtOverlay;
     private GLSurfaceView mGLView;
     private final MyRenderer renderer = new MyRenderer();
 
@@ -75,29 +64,26 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
 
     private PowerManager.WakeLock wakeLock;
 
-    //Sensor-data variables for camera tilt
-    private SensorManager mSensorManager;
-    private Sensor accelerometer;
-    private Sensor magnetometer;
-    private Sensor rotVectSensor;
-
     //data buffers for camera tilt
-    Matrix baseCameraRotation, cameraRotation, camBasePose;
+    Matrix baseCameraRotation, camBasePose;
 
     /* the rotational matrix for the shoulder, necessary to properly position the elbow with the myo */
     Matrix RShoulderRot;
 
     /*** ROS STUFF ***/
     private MyoSubscriber myoSub;
+    private StateSubscriber stateSub;
 
 
     public ExerciseActivity() {
         super("exercisedetector", "exercisedetector");
+        instance = this;
     }
 
     @Override
     protected void init(NodeMainExecutor nodeMainExecutor) {
-        myoSub = new MyoSubscriber(this);
+        myoSub = new MyoSubscriber();
+        stateSub = new StateSubscriber();
 
         try {
             java.net.Socket socket = new java.net.Socket(getMasterUri().getHost(), getMasterUri().getPort());
@@ -106,6 +92,7 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
             NodeConfiguration nodeConfiguration =
                     NodeConfiguration.newPublic(local_network_address.getHostAddress(), getMasterUri());
             nodeMainExecutor.execute(myoSub, nodeConfiguration);
+            nodeMainExecutor.execute(stateSub, nodeConfiguration);
         } catch (IOException e) {
             // Socket problem
             Log.e("exercisedetector", "socket error trying to get networking information from the master uri");
@@ -121,9 +108,19 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
 
         super.onCreate(savedInstanceState);
 
-        mGLView = new GLSurfaceView(getApplication());
         //setContentView(new LoadingView(getApplicationContext()));
-        setContentView(mGLView);
+
+        FrameLayout frame = new FrameLayout(this);
+        addContentView(frame, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mGLView = new GLSurfaceView(getApplication());
+        frame.addView(mGLView);
+
+        txtOverlay = new TextOverlay(getApplicationContext());
+        addContentView(txtOverlay, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        txtOverlay.setVisibility(View.VISIBLE);
+        txtOverlay.bringToFront();
+        txtOverlay.setHeaderText("The model is now demonstrating the exercise you are to perform");
 
         mGLView.setEGLConfigChooser(new GLSurfaceView.EGLConfigChooser() {
             public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
@@ -146,10 +143,14 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
 
         try {
             Resources res = getResources();
-            actor = BonesIO.loadGroup(res.openRawResource(R.raw.seymour_group));
+            actor = BonesIO.loadGroup(res.openRawResource(R.raw.man));
             actor.addToWorld(world);
 
             skeletonHelper = new SkeletonHelper(actor);
+
+            actor.getRoot().rotateX(-(float) Math.PI / 2);
+//            actor.getRoot().rotateMesh();
+//            actor.getRoot().clearRotation();
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -167,11 +168,6 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "exercisedetector");
 
-        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        magnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        rotVectSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-
         initializeModelPose();
     }
 
@@ -181,22 +177,22 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
     void initializeModelPose() {
 
         RShoulderRot = new Matrix();
-        RShoulderRot.rotateZ((float) Math.PI / 3);
-        RShoulderRot.rotateX(.6f);
+        RShoulderRot.rotateY(-(float) Math.PI / 3);
+        RShoulderRot.rotateZ(-.4f);
 
-        update(RShoulderRot, 10);
+        update(RShoulderRot, 21); //10);
         RShoulderRot = RShoulderRot.invert();
 
         Matrix LShoulderRot = new Matrix();
-        LShoulderRot.rotateZ(-(float) Math.PI * 2 / 6);
+        LShoulderRot.rotateY((float) Math.PI * 4 / 11);
 
-        update(LShoulderRot, 7);
+        update(LShoulderRot, 19);//7);
 
         Matrix LElbowRot = new Matrix();
-        LElbowRot.rotateZ(-(float) Math.PI * 5 / 11);
+        LElbowRot.rotateY((float) Math.PI * 5 / 11);
         LElbowRot.matMul(LShoulderRot.invert());
 
-        update(LElbowRot, 8);
+        update(LElbowRot, 22); //8);
 
     }
 
@@ -205,8 +201,6 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
         Logger.log("onPause");
         super.onPause();
         mGLView.onPause();
-
-        mSensorManager.unregisterListener(this);
 
         if (wakeLock.isHeld())
             wakeLock.release();
@@ -218,10 +212,6 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
         super.onResume();
         mGLView.onResume();
 
-        mSensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
-        mSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
-        mSensorManager.registerListener(this, rotVectSensor, SensorManager.SENSOR_DELAY_UI);
-
         if (!wakeLock.isHeld())
             wakeLock.acquire();
     }
@@ -232,41 +222,13 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
         super.onStop();
     }
 
-    int selector = 2;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(event.getAction() == MotionEvent.ACTION_UP) {
-            baseCameraRotation = null;
-            selector = ++selector%27;
-            Log.d("myNinja", "selector: " + selector);
-        }
-
         if (cameraController.onTouchEvent(event))
             return true;
 
         return super.onTouchEvent(event);
     }
-
-    public void onSensorChanged(SensorEvent event) {
-        if(event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
-            Quaternion glassOrientation = new Quaternion();
-
-            glassOrientation.set(event.values[0], event.values[2], event.values[1],
-                    (event.values.length == 4 ? event.values[3] : 0));
-//            Log.d("myNinja", "ort: " + event.values[0] + " " + event.values[1] + " " + event.values[2]
-//                    + " " + ( event.values.length == 4 ? event.values[3] : 0));
-            cameraRotation = glassOrientation.getRotationMatrix();
-
-            if (baseCameraRotation == null) {
-                baseCameraRotation = cameraRotation.invert();
-            }
-
-            cameraRotation.matMul(baseCameraRotation);
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) { }
 
     class MyRenderer implements GLSurfaceView.Renderer {
 
@@ -283,6 +245,7 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
             if (frameBuffer != null) {
                 frameBuffer.dispose();
             }
+
             frameBuffer = new FrameBuffer(gl, w, h);
 
             cameraController.placeCamera();
@@ -296,26 +259,19 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
             TextureManager.getInstance().flush();
             Resources res = getResources();
 
-            Texture texture = new Texture(res.openRawResource(R.raw.seymour));
+            Texture texture = new Texture(res.openRawResource(R.raw.no_symbol_vincent));
             texture.keepPixelData(true);
-            TextureManager.getInstance().addTexture("ninja", texture);
+            TextureManager.getInstance().addTexture("vincent", texture);
 
             for (Animated3D a : actor)
-                a.setTexture("ninja");
+                a.setTexture("vincent");
+
         }
 
         @Override
         public void onDrawFrame(GL10 gl) {
             if (frameBuffer == null) {
                 return;
-            }
-
-            if (cameraRotation != null) {
-                synchronized (cameraRotation) {
-                    Matrix m = new Matrix(camBasePose);
-                    m.matMul(cameraRotation);
-                    //world.getCamera().setBack(m);
-                }
             }
 
             frameBuffer.clear();
@@ -351,11 +307,12 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
 
     }
 
-    //make this a callback function for a subscriber
     public void update(Matrix rotation, int selector) {
 
-        if(selector == 11)
+        if(selector == 11) {
             rotation.matMul(RShoulderRot);
+            rotation.get
+        }
 
         skeletonHelper.transformJointOnPivot(selector, rotation);
 
@@ -364,4 +321,37 @@ public class ExerciseActivity extends RosActivity implements SensorEventListener
         skeletonHelper.getGroup().applyAnimation();
 
     }
+
+    public void beginExercise() {
+        programStatus = ProgramStatus.EXERCISING;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                txtOverlay.setHeaderText("Now it is your turn to perform the exercise");
+
+            }
+        });
+    }
+
+    public TextOverlay getTextOverlay() {
+        return txtOverlay;
+    }
+
+    public StateSubscriber getStateSub() {
+        return stateSub;
+    }
+
+    public MyoSubscriber getMyoSub() {
+        return myoSub;
+    }
+
+    public ProgramStatus getProgramStatus() {
+        return programStatus;
+    }
+
+    public void setProgramStatus(ProgramStatus programStatus) {
+        this.programStatus = programStatus;
+    }
+
 }

@@ -11,15 +11,15 @@ import org.ros.node.topic.Subscriber;
 
 import java.util.ArrayList;
 
-import raft.jpct.bones.Quaternion;
-
 /**
  * Created by chris on 12/30/15.
  */
 public class StateSubscriber implements NodeMain {
 
     private final ArrayList<Matrix> stateOrientations;
+    private final ExerciseActivity housingActivity = ExerciseActivity.getInstance();
     private Matrix currentState;
+    private double progress;
 
     public StateSubscriber() {
         stateOrientations = new ArrayList();
@@ -32,7 +32,7 @@ public class StateSubscriber implements NodeMain {
             @Override
             public void onNewMessage(geometry_msgs.Quaternion msg) {
                 if(MyoHelper.isEndingQuat(msg)) {
-                    //Alert the activity
+                    //Alert the activity?
                 } else {
                     stateOrientations.add(MyoHelper.myoToMat(msg));
                 }
@@ -40,11 +40,20 @@ public class StateSubscriber implements NodeMain {
             }
         });
 
-        Subscriber<geometry_msgs.Quaternion> stateChangedSubscriber = connectedNode.newSubscriber("/myo/ort", geometry_msgs.Quaternion._TYPE);
-        stateChangedSubscriber.addMessageListener(new MessageListener<geometry_msgs.Quaternion>() {
+        Subscriber<std_msgs.Float64> stateChangedSubscriber = connectedNode.newSubscriber("/exercise/progress", std_msgs.Float64._TYPE);
+        stateChangedSubscriber.addMessageListener(new MessageListener<std_msgs.Float64>() {
             @Override
-            public void onNewMessage(geometry_msgs.Quaternion msg) {
-                currentState = MyoHelper.myoToMat(msg);
+            public void onNewMessage(final std_msgs.Float64 msg) {
+
+                ExerciseActivity.getInstance().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        progress = msg.getData();
+                        ExerciseActivity.getInstance().getTextOverlay().invalidate();
+
+                    }
+                });
             }
         });
     }
@@ -77,4 +86,7 @@ public class StateSubscriber implements NodeMain {
         return currentState;
     }
 
+    public double getProgress() {
+        return progress;
+    }
 }

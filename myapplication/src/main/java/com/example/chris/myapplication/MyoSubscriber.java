@@ -2,29 +2,29 @@ package com.example.chris.myapplication;
 
 import android.util.Log;
 
-import com.threed.jpct.Matrix;
-
+import org.ros.internal.node.RegistrantListener;
+import org.ros.internal.node.topic.SubscriberIdentifier;
 import org.ros.message.MessageListener;
 import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
+import org.ros.node.topic.Publisher;
+import org.ros.node.topic.PublisherListener;
 import org.ros.node.topic.Subscriber;
 
-import bones.samples.android.*;
-import raft.jpct.bones.Quaternion;
-import std_msgs.Int32;
+import std_msgs.Empty;
 
 /**
  * Created by chris on 12/30/15.
  */
 public class MyoSubscriber implements NodeMain {
 
-    private final ExerciseActivity housingActivity;
+    private Publisher<std_msgs.Empty> beginPlaybackPublisher;
+    private final ExerciseActivity housingActivity = ExerciseActivity.getInstance();
+    private final int ELBOW_ID = 24;
 
-    public MyoSubscriber(ExerciseActivity housingActivity) {
-        this.housingActivity = housingActivity;
-    }
+    public MyoSubscriber() {}
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
@@ -32,19 +32,74 @@ public class MyoSubscriber implements NodeMain {
         raw_myo_sub.addMessageListener(new MessageListener<geometry_msgs.Quaternion>() {
             @Override
             public void onNewMessage(geometry_msgs.Quaternion msg) {
-                housingActivity.update(MyoHelper.myoToMat(msg), 11);
+                if(housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.EXERCISING) {
+                    housingActivity.update(MyoHelper.myoToMat(msg), ELBOW_ID);
+                }
             }
         });
 
-        Subscriber<geometry_msgs.Quaternion> playback_sub = connectedNode.newSubscriber("/myo/ort", geometry_msgs.Quaternion._TYPE);
+        Subscriber<geometry_msgs.Quaternion> playback_sub = connectedNode.newSubscriber("/exercise/playback", geometry_msgs.Quaternion._TYPE);
         playback_sub.addMessageListener(new MessageListener<geometry_msgs.Quaternion>() {
             @Override
             public void onNewMessage(geometry_msgs.Quaternion msg) {
-                if(MyoHelper.isEndingQuat(msg)) {
-                    //Alert the activity
-                } else {
-                    housingActivity.update(MyoHelper.myoToMat(msg), 11);
+
+                if(housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.EXERCISING) {
+                    housingActivity.setProgramStatus(ExerciseActivity.ProgramStatus.STUCK_AT_STAGE);
+
+                    housingActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            housingActivity.getTextOverlay().setHeaderText("You seem to be having trouble, the robot is now demonstrating the exercise");
+
+                        }
+                    });
                 }
+
+                if (MyoHelper.isEndingQuat(msg)) {
+                    housingActivity.beginExercise();
+                } else {
+                    housingActivity.update(MyoHelper.myoToMat(msg), ELBOW_ID);
+                }
+            }
+        });
+
+        beginPlaybackPublisher = connectedNode.newPublisher("/exercise/playback_trigger", std_msgs.Empty._TYPE);
+        beginPlaybackPublisher.addListener(new PublisherListener<Empty>() {
+            @Override
+            public void onNewSubscriber(Publisher<Empty> publisher, SubscriberIdentifier subscriberIdentifier) {
+
+            }
+
+            @Override
+            public void onShutdown(Publisher<Empty> publisher) {
+
+            }
+
+            @Override
+            public void onMasterRegistrationSuccess(Publisher<Empty> emptyPublisher) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                beginPlayback();
+            }
+
+            @Override
+            public void onMasterRegistrationFailure(Publisher<Empty> emptyPublisher) {
+
+            }
+
+            @Override
+            public void onMasterUnregistrationSuccess(Publisher<Empty> emptyPublisher) {
+
+            }
+
+            @Override
+            public void onMasterUnregistrationFailure(Publisher<Empty> emptyPublisher) {
+
             }
         });
     }
@@ -67,6 +122,11 @@ public class MyoSubscriber implements NodeMain {
     @Override
     public GraphName getDefaultNodeName() {
         return GraphName.of("exercise_myo_sub");
+    }
+
+    public void beginPlayback() {
+        beginPlaybackPublisher.publish(beginPlaybackPublisher.newMessage());
+        Log.d("exercise", "pubbed trigger");
     }
 
 }
