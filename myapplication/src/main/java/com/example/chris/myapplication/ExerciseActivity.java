@@ -180,19 +180,19 @@ public class ExerciseActivity extends RosActivity {
         RShoulderRot.rotateY(-(float) Math.PI / 3);
         RShoulderRot.rotateZ(-.4f);
 
-        update(RShoulderRot, 21); //10);
+        update(RShoulderRot, Constants.RSHOULDER_ID); //10);
         RShoulderRot = RShoulderRot.invert();
 
         Matrix LShoulderRot = new Matrix();
         LShoulderRot.rotateY((float) Math.PI * 4 / 11);
 
-        update(LShoulderRot, 19);//7);
+        update(LShoulderRot, Constants.LSHOULDER_ID);//7);
 
         Matrix LElbowRot = new Matrix();
         LElbowRot.rotateY((float) Math.PI * 5 / 11);
         LElbowRot.matMul(LShoulderRot.invert());
 
-        update(LElbowRot, 22); //8);
+        update(LElbowRot, Constants.LELBOW_ID); //8);
 
     }
 
@@ -309,9 +309,18 @@ public class ExerciseActivity extends RosActivity {
 
     public void update(Matrix rotation, int selector) {
 
-        if(selector == 11) {
+        if(selector == Constants.RELBOW_ID) {
             rotation.matMul(RShoulderRot);
-            rotation.get
+
+            SimpleVector armEulers = MyoHelper.rotMatToEuler(rotation);
+            Matrix handRotation = new Matrix();
+
+            if(armEulers.x > Math.PI) {
+                armEulers.x -= 2*Math.PI;
+            }
+
+            handRotation.rotateX(armEulers.x * .6f);
+            update(handRotation, Constants.RHAND_ID);
         }
 
         skeletonHelper.transformJointOnPivot(selector, rotation);

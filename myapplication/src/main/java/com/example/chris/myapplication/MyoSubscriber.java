@@ -22,7 +22,6 @@ public class MyoSubscriber implements NodeMain {
 
     private Publisher<std_msgs.Empty> beginPlaybackPublisher;
     private final ExerciseActivity housingActivity = ExerciseActivity.getInstance();
-    private final int ELBOW_ID = 24;
 
     public MyoSubscriber() {}
 
@@ -33,7 +32,7 @@ public class MyoSubscriber implements NodeMain {
             @Override
             public void onNewMessage(geometry_msgs.Quaternion msg) {
                 if(housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.EXERCISING) {
-                    housingActivity.update(MyoHelper.myoToMat(msg), ELBOW_ID);
+                    housingActivity.update(MyoHelper.myoToMat(msg), Constants.RELBOW_ID);
                 }
             }
         });
@@ -59,7 +58,7 @@ public class MyoSubscriber implements NodeMain {
                 if (MyoHelper.isEndingQuat(msg)) {
                     housingActivity.beginExercise();
                 } else {
-                    housingActivity.update(MyoHelper.myoToMat(msg), ELBOW_ID);
+                    housingActivity.update(MyoHelper.myoToMat(msg), Constants.RELBOW_ID);
                 }
             }
         });
