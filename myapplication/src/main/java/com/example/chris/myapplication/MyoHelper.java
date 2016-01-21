@@ -34,8 +34,6 @@ public class MyoHelper {
         Matrix m = quat.getRotationMatrix();
         m.rotateZ(-(float) Math.PI * .4f);
 
-//        eulerAngles(quat.x, quat.y, quat.z, quat.w);
-
         return m;
     }
 
@@ -66,32 +64,4 @@ public class MyoHelper {
         v = Math.IEEEremainder(v, 2.0*Math.PI);
         return v>=0 ? v : 2.0*Math.PI+v;
     }
-
-    public static void eulerAngles(float x, float y, float z, float w) {
-        float roll, pitch, yaw;
-        float test = x * y + z * w;
-
-        if (test > 0.499) { // singularity at north pole
-            pitch = 2 * (float)Math.atan2(x, w);
-            yaw = (float)Math.PI / 2;
-            roll = 0;
-
-        } else if (test < -0.499) { // singularity at south pole
-            pitch = -2 * (float)Math.atan2(x, w);
-            yaw = -(float)Math.PI / 2;
-            roll = 0;
-
-        } else {
-            float sqx = x * x;
-            float sqy = y * y;
-            float sqz = z * z;
-            pitch = (float) Math.atan2(2 * y * w - 2 * x * z, 1 - 2 * sqy - 2 * sqz);
-            yaw = (float) Math.asin(2 * test);
-            roll = (float) Math.atan2(2 * x * w - 2 * y * z, 1 - 2 * sqx - 2 * sqz);
-        }
-
-        Log.d("exercise", "r: " + MathUtils.RAD_TO_DEG * roll + " p: "
-                + MathUtils.RAD_TO_DEG * pitch + " y: " + MathUtils.RAD_TO_DEG * yaw);
-    }
-
 }

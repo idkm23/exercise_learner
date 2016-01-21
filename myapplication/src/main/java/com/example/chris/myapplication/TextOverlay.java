@@ -1,12 +1,15 @@
 package com.example.chris.myapplication;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.View;
 
+import edu.uml.odgboxtherapy.R;
 import glfont.TexturePack;
 
 /**
@@ -16,6 +19,7 @@ public class TextOverlay extends View {
     private String onScreenMessage = "";
     private int message_width, message_height;
     private final Paint paint;
+    private Bitmap completionScreen;
 
     public TextOverlay(Context context) {
         super(context);
@@ -25,6 +29,7 @@ public class TextOverlay extends View {
 
         //ascent returns a negative number
         message_height = -1*(int)paint.ascent();
+        completionScreen = BitmapFactory.decodeResource(getResources(), R.drawable.ribbon_banner);
     }
 
     public boolean setHeaderText(String msg) {
@@ -39,10 +44,12 @@ public class TextOverlay extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if(ExerciseActivity.getInstance().getStateSub() != null) {
+        ExerciseActivity activity = ExerciseActivity.getInstance();
+
+        if(activity.getStateSub() != null) {
             paint.setColor(Color.GREEN);
             canvas.drawRect(0, getHeight() - 33 - message_height,
-                    (int) (ExerciseActivity.getInstance().getStateSub().getProgress() * getWidth()),
+                    (int) (activity.getStateSub().getProgress() * getWidth()),
                     getHeight(), paint);
         }
 
@@ -51,6 +58,16 @@ public class TextOverlay extends View {
 
         paint.setColor(Color.BLACK);
         canvas.drawText("Progress:", 10, getHeight() - 20, paint);
+
+        if(activity.getProgramStatus() == ExerciseActivity.ProgramStatus.COMPLETE) {
+            canvas.drawBitmap(completionScreen, getWidth()/2 - completionScreen.getScaledWidth(canvas)/2 + 5,
+                    getHeight()/2 - completionScreen.getScaledHeight(canvas)/2, paint);
+
+            canvas.drawText(activity.getPlayerStats().getTimeElapsed() + " seconds", getWidth() / 2, getHeight() / 2 - 132, paint);
+            canvas.drawText(activity.getPlayerStats().getPromptCount()
+                            + " demo" + (activity.getPlayerStats().getPromptCount()!=1?"s":""),
+                    getWidth()/2, getHeight()/2 + 20, paint);
+        }
 
     }
 }

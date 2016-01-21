@@ -39,13 +39,14 @@ import org.ros.android.RosActivity;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
 
-public class ExerciseActivity extends RosActivity {
+public class ExerciseActivity extends RosActivity implements View.OnTouchListener {
 
     protected enum ProgramStatus {
-        PLAYBACK, PLAY2EXER, EXERCISING, STUCK_AT_STAGE, COMPLETE
+        PLAYBACK, EXERCISING, STUCK_AT_STAGE, COMPLETE
     }
 
-    private ProgramStatus programStatus = ProgramStatus.PLAYBACK;
+    private ProgramStatus programStatus;
+    private PlayerStats playerStats;
 
     private static ExerciseActivity instance;
 
@@ -63,9 +64,6 @@ public class ExerciseActivity extends RosActivity {
     private CameraOrbitController cameraController;
 
     private PowerManager.WakeLock wakeLock;
-
-    //data buffers for camera tilt
-    Matrix baseCameraRotation, camBasePose;
 
     /* the rotational matrix for the shoulder, necessary to properly position the elbow with the myo */
     Matrix RShoulderRot;
@@ -97,7 +95,6 @@ public class ExerciseActivity extends RosActivity {
             // Socket problem
             Log.e("exercisedetector", "socket error trying to get networking information from the master uri");
         }
-
     }
 
     /*** JPCT STUFF ***/
@@ -107,8 +104,6 @@ public class ExerciseActivity extends RosActivity {
         Logger.log("onCreate");
 
         super.onCreate(savedInstanceState);
-
-        //setContentView(new LoadingView(getApplicationContext()));
 
         FrameLayout frame = new FrameLayout(this);
         addContentView(frame, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -120,7 +115,7 @@ public class ExerciseActivity extends RosActivity {
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         txtOverlay.setVisibility(View.VISIBLE);
         txtOverlay.bringToFront();
-        txtOverlay.setHeaderText("The model is now demonstrating the exercise you are to perform");
+        txtOverlay.setOnTouchListener(this);
 
         mGLView.setEGLConfigChooser(new GLSurfaceView.EGLConfigChooser() {
             public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
@@ -249,7 +244,6 @@ public class ExerciseActivity extends RosActivity {
             frameBuffer = new FrameBuffer(gl, w, h);
 
             cameraController.placeCamera();
-            camBasePose = world.getCamera().getDirection().getRotationMatrix();
         }
 
         @Override
@@ -307,7 +301,7 @@ public class ExerciseActivity extends RosActivity {
 
     }
 
-    public void update(Matrix rotation, int selector) {
+    public synchronized void update(Matrix rotation, int selector) {
 
         if(selector == Constants.RELBOW_ID) {
             rotation.matMul(RShoulderRot);
@@ -319,7 +313,7 @@ public class ExerciseActivity extends RosActivity {
                 armEulers.x -= 2*Math.PI;
             }
 
-            handRotation.rotateX(armEulers.x * .6f);
+            handRotation.rotateX(armEulers.x * Constants.HAND_ELBOW_ROTATION_RATIO + Constants.HAND_ROTATION_OFFSET);
             update(handRotation, Constants.RHAND_ID);
         }
 
@@ -333,6 +327,9 @@ public class ExerciseActivity extends RosActivity {
 
     public void beginExercise() {
         programStatus = ProgramStatus.EXERCISING;
+        stateSub.clear();
+        playerStats = new PlayerStats();
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -341,6 +338,14 @@ public class ExerciseActivity extends RosActivity {
 
             }
         });
+    }
+
+    public void completeExercise() {
+        programStatus = ProgramStatus.COMPLETE;
+
+        if(playerStats != null) {
+            playerStats.finish();
+        }
     }
 
     public TextOverlay getTextOverlay() {
@@ -361,6 +366,27 @@ public class ExerciseActivity extends RosActivity {
 
     public void setProgramStatus(ProgramStatus programStatus) {
         this.programStatus = programStatus;
+    }
+
+    public PlayerStats getPlayerStats() {
+        return playerStats;
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if(programStatus == ProgramStatus.COMPLETE) {
+
+            clear();
+            myoSub.beginPlayback();
+
+        }
+
+        return true;
+    }
+
+    public void clear() {
+        stateSub.clear();
+        txtOverlay.invalidate();
     }
 
 }

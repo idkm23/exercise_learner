@@ -2,7 +2,6 @@ package com.example.chris.myapplication;
 
 import android.util.Log;
 
-import org.ros.internal.node.RegistrantListener;
 import org.ros.internal.node.topic.SubscriberIdentifier;
 import org.ros.message.MessageListener;
 import org.ros.namespace.GraphName;
@@ -23,8 +22,6 @@ public class MyoSubscriber implements NodeMain {
     private Publisher<std_msgs.Empty> beginPlaybackPublisher;
     private final ExerciseActivity housingActivity = ExerciseActivity.getInstance();
 
-    public MyoSubscriber() {}
-
     @Override
     public void onStart(ConnectedNode connectedNode) {
         Subscriber<geometry_msgs.Quaternion> raw_myo_sub = connectedNode.newSubscriber("/myo/ort", geometry_msgs.Quaternion._TYPE);
@@ -44,6 +41,7 @@ public class MyoSubscriber implements NodeMain {
 
                 if(housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.EXERCISING) {
                     housingActivity.setProgramStatus(ExerciseActivity.ProgramStatus.STUCK_AT_STAGE);
+                    housingActivity.getPlayerStats().promptedPlayer();
 
                     housingActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -55,11 +53,16 @@ public class MyoSubscriber implements NodeMain {
                     });
                 }
 
-                if (MyoHelper.isEndingQuat(msg)) {
-                    housingActivity.beginExercise();
-                } else {
-                    housingActivity.update(MyoHelper.myoToMat(msg), Constants.RELBOW_ID);
+                else if (housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.PLAYBACK
+                        || housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.STUCK_AT_STAGE) {
+                    if(MyoHelper.isEndingQuat(msg))
+                    {
+                        housingActivity.beginExercise();
+                    } else {
+                        housingActivity.update(MyoHelper.myoToMat(msg), Constants.RELBOW_ID);
+                    }
                 }
+
             }
         });
 
@@ -75,6 +78,10 @@ public class MyoSubscriber implements NodeMain {
 
             }
 
+            /**
+             * called when the beginPlaybackPublisher
+             * @param emptyPublisher
+             */
             @Override
             public void onMasterRegistrationSuccess(Publisher<Empty> emptyPublisher) {
                 try {
@@ -124,6 +131,17 @@ public class MyoSubscriber implements NodeMain {
     }
 
     public void beginPlayback() {
+
+        housingActivity.setProgramStatus(ExerciseActivity.ProgramStatus.PLAYBACK);
+        housingActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                housingActivity.getTextOverlay().setHeaderText("The model is now demonstrating the exercise you are to perform");
+
+            }
+        });
+
         beginPlaybackPublisher.publish(beginPlaybackPublisher.newMessage());
         Log.d("exercise", "pubbed trigger");
     }

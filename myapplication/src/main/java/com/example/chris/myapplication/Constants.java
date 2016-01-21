@@ -10,4 +10,8 @@ public class Constants {
     public static final int LELBOW_ID = 22;
     public static final int RSHOULDER_ID = 21;
     public static final int LSHOULDER_ID = 19;
+
+
+    public static final float HAND_ELBOW_ROTATION_RATIO = .6f;
+    public static final float HAND_ROTATION_OFFSET = .8f;
 }

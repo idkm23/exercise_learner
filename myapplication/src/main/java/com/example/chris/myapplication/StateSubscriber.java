@@ -16,41 +16,33 @@ import java.util.ArrayList;
  */
 public class StateSubscriber implements NodeMain {
 
-    private final ArrayList<Matrix> stateOrientations;
     private final ExerciseActivity housingActivity = ExerciseActivity.getInstance();
-    private Matrix currentState;
     private double progress;
-
-    public StateSubscriber() {
-        stateOrientations = new ArrayList();
-    }
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
-        Subscriber<geometry_msgs.Quaternion> allStateSubscriber = connectedNode.newSubscriber("/myo/ort", geometry_msgs.Quaternion._TYPE);
-        allStateSubscriber.addMessageListener(new MessageListener<geometry_msgs.Quaternion>() {
-            @Override
-            public void onNewMessage(geometry_msgs.Quaternion msg) {
-                if(MyoHelper.isEndingQuat(msg)) {
-                    //Alert the activity?
-                } else {
-                    stateOrientations.add(MyoHelper.myoToMat(msg));
-                }
-
-            }
-        });
 
         Subscriber<std_msgs.Float64> stateChangedSubscriber = connectedNode.newSubscriber("/exercise/progress", std_msgs.Float64._TYPE);
         stateChangedSubscriber.addMessageListener(new MessageListener<std_msgs.Float64>() {
             @Override
             public void onNewMessage(final std_msgs.Float64 msg) {
 
-                ExerciseActivity.getInstance().runOnUiThread(new Runnable() {
+                if(housingActivity.getProgramStatus() != ExerciseActivity.ProgramStatus.EXERCISING
+                        && housingActivity.getProgramStatus() != ExerciseActivity.ProgramStatus.STUCK_AT_STAGE) {
+                    return;
+                }
+
+                progress = msg.getData();
+
+
+                housingActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
-                        progress = msg.getData();
                         ExerciseActivity.getInstance().getTextOverlay().invalidate();
+                        if (progress == 1f) {
+                            housingActivity.completeExercise();
+                        }
 
                     }
                 });
@@ -78,12 +70,8 @@ public class StateSubscriber implements NodeMain {
         return GraphName.of("exercise_state_sub");
     }
 
-    public ArrayList<Matrix> getStates() {
-        return stateOrientations;
-    }
-
-    public Matrix getCurrentState() {
-        return currentState;
+    public void clear() {
+        progress = 0;
     }
 
     public double getProgress() {
