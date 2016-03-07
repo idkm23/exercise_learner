@@ -30,6 +30,7 @@ import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.Light;
 import com.threed.jpct.Logger;
 import com.threed.jpct.Matrix;
+import com.threed.jpct.RGBColor;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.Texture;
 import com.threed.jpct.TextureManager;
@@ -46,7 +47,7 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
     }
 
     private ProgramStatus programStatus;
-    private PlayerStats playerStats;
+    private PlayerStats playerStats = new PlayerStats();
 
     private static ExerciseActivity instance;
 
@@ -138,14 +139,13 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
         try {
             Resources res = getResources();
-            actor = BonesIO.loadGroup(res.openRawResource(R.raw.man));
+            actor = BonesIO.loadGroup(res.openRawResource(R.raw.fortypolyvincent));
             actor.addToWorld(world);
 
             skeletonHelper = new SkeletonHelper(actor);
 
             actor.getRoot().rotateX(-(float) Math.PI / 2);
-//            actor.getRoot().rotateMesh();
-//            actor.getRoot().clearRotation();
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -164,6 +164,26 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
         wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "exercisedetector");
 
         initializeModelPose();
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                Matrix x = new Matrix();
+                float theta = 0;
+
+                long before;
+                while(true) {
+                    before = System.currentTimeMillis();
+
+                    x.setIdentity();
+                    x.rotateY(theta += .06f);
+                    update(x, Constants.RELBOW_ID);
+
+                    Log.d("myExercise", "update_duration " + (System.currentTimeMillis() - before));
+                }
+            }
+
+        });
     }
 
     /**
@@ -172,23 +192,22 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
     void initializeModelPose() {
 
         RShoulderRot = new Matrix();
-        RShoulderRot.rotateY(-(float) Math.PI / 3);
+        RShoulderRot.rotateY(-(float) Math.PI * .4f);
         RShoulderRot.rotateZ(-.4f);
 
-        update(RShoulderRot, Constants.RSHOULDER_ID); //10);
+        update(RShoulderRot, Constants.RSHOULDER_ID);
         RShoulderRot = RShoulderRot.invert();
 
         Matrix LShoulderRot = new Matrix();
         LShoulderRot.rotateY((float) Math.PI * 4 / 11);
 
-        update(LShoulderRot, Constants.LSHOULDER_ID);//7);
+        update(LShoulderRot, Constants.LSHOULDER_ID);
 
         Matrix LElbowRot = new Matrix();
         LElbowRot.rotateY((float) Math.PI * 5 / 11);
         LElbowRot.matMul(LShoulderRot.invert());
 
-        update(LElbowRot, Constants.LELBOW_ID); //8);
-
+        update(LElbowRot, Constants.LELBOW_ID);
     }
 
     @Override
@@ -262,17 +281,38 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
         }
 
+        private int fps = 0;
+        private int lfps = 0;
+
+        private long fpsTime = System.currentTimeMillis();
+        private long lastFrameCompleted = System.currentTimeMillis();
+
+        private float theta = 0;
+
         @Override
         public void onDrawFrame(GL10 gl) {
             if (frameBuffer == null) {
                 return;
             }
 
-            frameBuffer.clear();
+            frameBuffer.clear( (programStatus == ProgramStatus.STUCK_AT_STAGE
+                    || programStatus == ProgramStatus.PLAYBACK
+                    ? new RGBColor(33, 6, 0) : RGBColor.BLACK) );
             world.renderScene(frameBuffer);
             world.draw(frameBuffer);
 
             frameBuffer.display();
+
+            if (System.currentTimeMillis() - fpsTime >= 1000) {
+                lfps = (fps + lfps) >> 1;
+                //Log.d("myExercise", "fps: " + fps);
+                fps = 0;
+                fpsTime = System.currentTimeMillis();
+            }
+
+            fps++;
+
+            lastFrameCompleted = System.currentTimeMillis();
         }
 
         /** calculates and returns whole bounding box of skinned group */
@@ -301,8 +341,7 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
     }
 
-    public synchronized void update(Matrix rotation, int selector) {
-
+    public void update(Matrix rotation, int selector) {
         if(selector == Constants.RELBOW_ID) {
             rotation.matMul(RShoulderRot);
 
@@ -323,12 +362,12 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
         skeletonHelper.getGroup().applySkeletonPose();
         skeletonHelper.getGroup().applyAnimation();
 
+        //Log.d("myExercise", "update_duration " + (System.currentTimeMillis() - before));
     }
 
     public void beginExercise() {
         programStatus = ProgramStatus.EXERCISING;
         stateSub.clear();
-        playerStats = new PlayerStats();
 
         runOnUiThread(new Runnable() {
             @Override
@@ -386,6 +425,7 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
     public void clear() {
         stateSub.clear();
+        playerStats = new PlayerStats();
         txtOverlay.invalidate();
     }
 

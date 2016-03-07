@@ -19,12 +19,12 @@ public class CameraOrbitController {
 
 	/** the angle with respect to positive Z axis. initial value is PI so looking down to positive Z axis. */
 	public float cameraAngle = (float)Math.PI;
-	public float cameraRadius = 40f;
+	public float cameraRadius = 49f;
 	public float cameraRotationSpeed = 0.1f;
 	public float minCameraRadius = 3f;
 	public float cameraMoveStepSize = 0.5f;
 
-	public float cameraHeight = -43f;
+	public float cameraHeight = -44f;
 	public float cameraHorzOffset = -11f;
 	private final SimpleVector cameraTarget = new SimpleVector(cameraHorzOffset, cameraHeight, 0);
 	

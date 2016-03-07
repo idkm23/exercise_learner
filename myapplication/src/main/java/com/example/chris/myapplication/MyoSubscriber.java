@@ -40,6 +40,11 @@ public class MyoSubscriber implements NodeMain {
             public void onNewMessage(geometry_msgs.Quaternion msg) {
 
                 if(housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.EXERCISING) {
+
+                    if(MyoHelper.isEndingQuat(msg)) {
+                        return;
+                    }
+
                     housingActivity.setProgramStatus(ExerciseActivity.ProgramStatus.STUCK_AT_STAGE);
                     housingActivity.getPlayerStats().promptedPlayer();
 
@@ -47,7 +52,7 @@ public class MyoSubscriber implements NodeMain {
                         @Override
                         public void run() {
 
-                            housingActivity.getTextOverlay().setHeaderText("You seem to be having trouble, the robot is now demonstrating the exercise");
+                            housingActivity.getTextOverlay().setHeaderText("You seem to be having trouble, the model is now demonstrating the exercise");
 
                         }
                     });

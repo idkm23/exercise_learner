@@ -16,7 +16,7 @@ public class MyoHelper {
     public static int END_FLAG = -1337;
 
     public static boolean isEndingQuat(geometry_msgs.Quaternion msg) {
-        return msg.getX() == END_FLAG && msg.getY() == END_FLAG && msg.getZ() == END_FLAG && msg.getW() == END_FLAG;
+        return msg.getX() == END_FLAG || msg.getY() == END_FLAG || msg.getZ() == END_FLAG || msg.getW() == END_FLAG;
     }
 
     public static Matrix myoToMat(geometry_msgs.Quaternion msg) {
@@ -53,9 +53,9 @@ public class MyoHelper {
 
         for(int i=0; i<3; i++) ea[i] = clamp(ea[i]);
 
-        if(Math.random() < .2)
-            Log.d("exercise", "r: " + MathUtils.RAD_TO_DEG * ea[0] + " p: "
-                    + MathUtils.RAD_TO_DEG * ea[1] + " y: " + MathUtils.RAD_TO_DEG * ea[2]);
+//        if(Math.random() < .2)
+//            Log.d("exercise", "r: " + MathUtils.RAD_TO_DEG * ea[0] + " p: "
+//                    + MathUtils.RAD_TO_DEG * ea[1] + " y: " + MathUtils.RAD_TO_DEG * ea[2]);
 
         return new SimpleVector(ea[0], ea[1], ea[2]);
     }
