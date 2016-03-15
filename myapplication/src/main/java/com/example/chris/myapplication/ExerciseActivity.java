@@ -395,6 +395,19 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
         });
     }
 
+    public void beginPlayback() {
+
+        programStatus = ExerciseActivity.ProgramStatus.PLAYBACK;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                txtOverlay.setHeaderText("The model is now demonstrating the exercise you are to perform");
+
+            }
+        });
+    }
+
     public void completeExercise() {
         programStatus = ProgramStatus.COMPLETE;
 
@@ -432,7 +445,7 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
         if(programStatus == ProgramStatus.COMPLETE) {
 
             clear();
-            myoSub.beginPlayback();
+            beginPlayback();
 
         }
 

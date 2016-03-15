@@ -83,49 +83,6 @@ public class MyoSubscriber implements NodeMain {
 
             }
         });
-
-        beginPlaybackPublisher = connectedNode.newPublisher("/exercise/playback_trigger", std_msgs.Empty._TYPE);
-        beginPlaybackPublisher.addListener(new PublisherListener<Empty>() {
-            @Override
-            public void onNewSubscriber(Publisher<Empty> publisher, SubscriberIdentifier subscriberIdentifier) {
-
-            }
-
-            @Override
-            public void onShutdown(Publisher<Empty> publisher) {
-
-            }
-
-            /**
-             * called when the beginPlaybackPublisher
-             * @param emptyPublisher
-             */
-            @Override
-            public void onMasterRegistrationSuccess(Publisher<Empty> emptyPublisher) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                beginPlayback();
-            }
-
-            @Override
-            public void onMasterRegistrationFailure(Publisher<Empty> emptyPublisher) {
-
-            }
-
-            @Override
-            public void onMasterUnregistrationSuccess(Publisher<Empty> emptyPublisher) {
-
-            }
-
-            @Override
-            public void onMasterUnregistrationFailure(Publisher<Empty> emptyPublisher) {
-
-            }
-        });
     }
 
     @Override
@@ -146,22 +103,6 @@ public class MyoSubscriber implements NodeMain {
     @Override
     public GraphName getDefaultNodeName() {
         return GraphName.of("exercise_myo_sub");
-    }
-
-    public void beginPlayback() {
-
-        housingActivity.setProgramStatus(ExerciseActivity.ProgramStatus.PLAYBACK);
-        housingActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-                housingActivity.getTextOverlay().setHeaderText("The model is now demonstrating the exercise you are to perform");
-
-            }
-        });
-
-        beginPlaybackPublisher.publish(beginPlaybackPublisher.newMessage());
-        Log.d("exercise", "pubbed trigger");
     }
 
 }
