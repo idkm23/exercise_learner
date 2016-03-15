@@ -10,6 +10,7 @@ public class PlayerStats {
     private int promptCount;
     private long startTime;
     private long timeElapsed;
+    private double accuracy;
 
     public PlayerStats() {
         startTime = System.nanoTime();
@@ -30,5 +31,13 @@ public class PlayerStats {
 
     public long getTimeElapsed() {
         return timeElapsed;
+    }
+
+    public void setAccuracy(double accuracy) {
+        this.accuracy = accuracy;
+    }
+
+    public double getAccuracy() {
+        return accuracy;
     }
 }

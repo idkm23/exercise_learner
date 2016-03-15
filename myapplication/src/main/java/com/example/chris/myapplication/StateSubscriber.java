@@ -21,6 +21,13 @@ public class StateSubscriber implements NodeMain {
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
+        Subscriber<std_msgs.Float64> accuracyStatSubscriber = connectedNode.newSubscriber("/exercise/accuracy", std_msgs.Float64._TYPE);
+        accuracyStatSubscriber.addMessageListener(new MessageListener<std_msgs.Float64>() {
+            @Override
+            public void onNewMessage(final std_msgs.Float64 msg) {
+                housingActivity.getPlayerStats().setAccuracy(msg.getData());
+            }
+        });
 
         Subscriber<std_msgs.Float64> stateChangedSubscriber = connectedNode.newSubscriber("/exercise/progress", std_msgs.Float64._TYPE);
         stateChangedSubscriber.addMessageListener(new MessageListener<std_msgs.Float64>() {

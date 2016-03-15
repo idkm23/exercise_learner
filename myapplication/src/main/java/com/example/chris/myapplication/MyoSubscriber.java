@@ -2,6 +2,8 @@ package com.example.chris.myapplication;
 
 import android.util.Log;
 
+import com.threed.jpct.Matrix;
+
 import org.ros.internal.node.topic.SubscriberIdentifier;
 import org.ros.message.MessageListener;
 import org.ros.namespace.GraphName;
@@ -21,15 +23,26 @@ public class MyoSubscriber implements NodeMain {
 
     private Publisher<std_msgs.Empty> beginPlaybackPublisher;
     private final ExerciseActivity housingActivity = ExerciseActivity.getInstance();
+    private Matrix lastUpperMyoReading = new Matrix();
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
-        Subscriber<geometry_msgs.Quaternion> raw_myo_sub = connectedNode.newSubscriber("/myo/ort", geometry_msgs.Quaternion._TYPE);
-        raw_myo_sub.addMessageListener(new MessageListener<geometry_msgs.Quaternion>() {
+        Subscriber<geometry_msgs.Quaternion> raw_myo_l_sub = connectedNode.newSubscriber("/myo/l/ort", geometry_msgs.Quaternion._TYPE);
+        raw_myo_l_sub.addMessageListener(new MessageListener<geometry_msgs.Quaternion>() {
             @Override
             public void onNewMessage(geometry_msgs.Quaternion msg) {
                 if(housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.EXERCISING) {
-                    housingActivity.update(MyoHelper.myoToMat(msg), Constants.RELBOW_ID);
+                    housingActivity.updateArm(lastUpperMyoReading, MyoHelper.myoToMat(msg));
+                }
+            }
+        });
+
+        Subscriber<geometry_msgs.Quaternion> raw_myo_u_sub = connectedNode.newSubscriber("/myo/u/ort", geometry_msgs.Quaternion._TYPE);
+        raw_myo_u_sub.addMessageListener(new MessageListener<geometry_msgs.Quaternion>() {
+            @Override
+            public void onNewMessage(geometry_msgs.Quaternion msg) {
+                if(housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.EXERCISING) {
+                    lastUpperMyoReading = MyoHelper.myoToMat(msg);
                 }
             }
         });

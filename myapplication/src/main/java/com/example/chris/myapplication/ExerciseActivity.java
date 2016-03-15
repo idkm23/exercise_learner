@@ -19,6 +19,7 @@ import android.content.res.Resources;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.renderscript.Mesh;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +31,8 @@ import com.threed.jpct.FrameBuffer;
 import com.threed.jpct.Light;
 import com.threed.jpct.Logger;
 import com.threed.jpct.Matrix;
+import com.threed.jpct.Object3D;
+import com.threed.jpct.Primitives;
 import com.threed.jpct.RGBColor;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.Texture;
@@ -72,7 +75,6 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
     /*** ROS STUFF ***/
     private MyoSubscriber myoSub;
     private StateSubscriber stateSub;
-
 
     public ExerciseActivity() {
         super("exercisedetector", "exercisedetector");
@@ -137,9 +139,13 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
         world = new World();
 
+        final Object3D sphere = Primitives.getSphere(3);
         try {
             Resources res = getResources();
             actor = BonesIO.loadGroup(res.openRawResource(R.raw.fortypolyvincent));
+
+            world.addObject(sphere);
+            sphere.translate(new SimpleVector(-11, -44, 0));
             actor.addToWorld(world);
 
             skeletonHelper = new SkeletonHelper(actor);
@@ -163,24 +169,32 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "exercisedetector");
 
-        initializeModelPose();
+        //initializeModelPose();
+
+        /** Finding the vertex in the vertex soup! **/
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                Matrix x = new Matrix();
-                float theta = 0;
+                MyVertexController myVertexController = new MyVertexController();
+                myVertexController.init(actor.get(0).getMesh(), true);
+                SimpleVector[] meshVertices = myVertexController.getSourceMesh();
+                Log.d("vertStager", "verts: " + meshVertices.length);
 
-                long before;
-                while(true) {
-                    before = System.currentTimeMillis();
+                for(int i = 0; i < meshVertices.length; i++) {
+                    sphere.setTranslationMatrix(new Matrix());
+                    meshVertices[i].rotateX((float) Math.PI / 2);
+                    sphere.translate(meshVertices[i].x, meshVertices[i].y, meshVertices[i].z);
 
-                    x.setIdentity();
-                    x.rotateY(theta += .06f);
-                    update(x, Constants.RELBOW_ID);
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
-                    Log.d("myExercise", "update_duration " + (System.currentTimeMillis() - before));
-                }
+                    Log.d("vertStager", i + " " + meshVertices[i].x + " "
+                            + meshVertices[i].y + " " + meshVertices[i].z);
+               }
             }
 
         });
@@ -202,12 +216,6 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
         LShoulderRot.rotateY((float) Math.PI * 4 / 11);
 
         update(LShoulderRot, Constants.LSHOULDER_ID);
-
-        Matrix LElbowRot = new Matrix();
-        LElbowRot.rotateY((float) Math.PI * 5 / 11);
-        LElbowRot.matMul(LShoulderRot.invert());
-
-        update(LElbowRot, Constants.LELBOW_ID);
     }
 
     @Override
@@ -285,9 +293,6 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
         private int lfps = 0;
 
         private long fpsTime = System.currentTimeMillis();
-        private long lastFrameCompleted = System.currentTimeMillis();
-
-        private float theta = 0;
 
         @Override
         public void onDrawFrame(GL10 gl) {
@@ -312,7 +317,6 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
             fps++;
 
-            lastFrameCompleted = System.currentTimeMillis();
         }
 
         /** calculates and returns whole bounding box of skinned group */
@@ -341,20 +345,7 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
     }
 
-    public void update(Matrix rotation, int selector) {
-        if(selector == Constants.RELBOW_ID) {
-            rotation.matMul(RShoulderRot);
-
-            SimpleVector armEulers = MyoHelper.rotMatToEuler(rotation);
-            Matrix handRotation = new Matrix();
-
-            if(armEulers.x > Math.PI) {
-                armEulers.x -= 2*Math.PI;
-            }
-
-            handRotation.rotateX(armEulers.x * Constants.HAND_ELBOW_ROTATION_RATIO + Constants.HAND_ROTATION_OFFSET);
-            update(handRotation, Constants.RHAND_ID);
-        }
+    public synchronized void update(Matrix rotation, int selector) {
 
         skeletonHelper.transformJointOnPivot(selector, rotation);
 
@@ -362,7 +353,32 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
         skeletonHelper.getGroup().applySkeletonPose();
         skeletonHelper.getGroup().applyAnimation();
 
-        //Log.d("myExercise", "update_duration " + (System.currentTimeMillis() - before));
+    }
+
+    public void handUpdate(Matrix elbowRotation) {
+
+        SimpleVector armEulers = MyoHelper.rotMatToEuler(elbowRotation);
+        Matrix handRotation = new Matrix();
+
+        if(armEulers.x > Math.PI) {
+            armEulers.x -= 2*Math.PI;
+        }
+
+        handRotation.rotateX(armEulers.x * Constants.HAND_ELBOW_ROTATION_RATIO + Constants.HAND_ROTATION_OFFSET);
+        skeletonHelper.transformJointOnPivot(Constants.RHAND_ID, handRotation);
+
+    }
+
+    public void updateArm(Matrix upperArm, Matrix lowerArm) {
+
+        skeletonHelper.transformJointOnPivot(Constants.RSHOULDER_ID, upperArm);
+        handUpdate(lowerArm);
+        lowerArm.matMul(upperArm.invert());
+        skeletonHelper.transformJointOnPivot(Constants.RELBOW_ID, lowerArm);
+
+        skeletonHelper.getPose().updateTransforms();
+        skeletonHelper.getGroup().applySkeletonPose();
+        skeletonHelper.getGroup().applyAnimation();
     }
 
     public void beginExercise() {
