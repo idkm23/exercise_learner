@@ -21,7 +21,6 @@ import std_msgs.Empty;
  */
 public class MyoSubscriber implements NodeMain {
 
-    private Publisher<std_msgs.Empty> beginPlaybackPublisher;
     private final ExerciseActivity housingActivity = ExerciseActivity.getInstance();
     private Matrix lastUpperMyoReading = new Matrix();
 

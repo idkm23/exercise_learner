@@ -169,7 +169,7 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "exercisedetector");
 
-        //initializeModelPose();
+        beginPlayback();
 
         /** Finding the vertex in the vertex soup! **/
         new Thread(new Runnable() {
