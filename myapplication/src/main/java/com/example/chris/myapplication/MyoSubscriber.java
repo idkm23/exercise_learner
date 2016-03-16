@@ -22,6 +22,7 @@ import std_msgs.Empty;
 public class MyoSubscriber implements NodeMain {
 
     private final ExerciseActivity housingActivity = ExerciseActivity.getInstance();
+    private Boolean readFirstU = false;
     private Matrix lastUpperMyoReading = new Matrix();
 
     @Override
@@ -31,7 +32,9 @@ public class MyoSubscriber implements NodeMain {
             @Override
             public void onNewMessage(geometry_msgs.Quaternion msg) {
                 if(housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.EXERCISING) {
-                    housingActivity.updateArm(lastUpperMyoReading, MyoHelper.myoToMat(msg));
+                    if(readFirstU) {
+                        housingActivity.updateArm(lastUpperMyoReading, MyoHelper.myoToMat(msg));
+                    }
                 }
             }
         });
@@ -41,6 +44,7 @@ public class MyoSubscriber implements NodeMain {
             @Override
             public void onNewMessage(geometry_msgs.Quaternion msg) {
                 if(housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.EXERCISING) {
+                    readFirstU = true;
                     lastUpperMyoReading = MyoHelper.myoToMat(msg);
                 }
             }

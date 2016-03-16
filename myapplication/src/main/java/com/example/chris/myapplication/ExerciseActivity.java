@@ -144,7 +144,7 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
             Resources res = getResources();
             actor = BonesIO.loadGroup(res.openRawResource(R.raw.fortypolyvincent));
 
-            world.addObject(sphere);
+            //world.addObject(sphere);
             sphere.translate(new SimpleVector(-11, -44, 0));
             actor.addToWorld(world);
 
@@ -229,6 +229,7 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
     }
 
     @Override
+
     protected void onResume() {
         Logger.log("onResume");
         super.onResume();
