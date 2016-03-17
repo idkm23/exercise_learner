@@ -102,6 +102,8 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
     /*** JPCT STUFF ***/
 
+    final Object3D armBox = MyoHelper.createBox(Constants.armPoints);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Logger.log("onCreate");
@@ -139,13 +141,28 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
         world = new World();
 
-        final Object3D sphere = Primitives.getSphere(3);
+        final Object3D sphere = Primitives.getSphere(1);
+
+//        armBox.addTriangle(Constants.p1, Constants.p2, Constants.p4);
+//        armBox.addTriangle(Constants.p1, Constants.p4, Constants.p3);
+//        armBox.addTriangle(Constants.p1, Constants.p3, Constants.p7);
+//        armBox.addTriangle(Constants.p1, Constants.p7, Constants.p5);
+//        armBox.addTriangle(Constants.p1, Constants.p5, Constants.p6);
+//        armBox.addTriangle(Constants.p1, Constants.p6, Constants.p2);
+//        armBox.addTriangle(Constants.p8, Constants.p6, Constants.p5);
+//        armBox.addTriangle(Constants.p8, Constants.p5, Constants.p7);
+//        armBox.addTriangle(Constants.p8, Constants.p6, Constants.p2);
+//        armBox.addTriangle(Constants.p8, Constants.p2, Constants.p4);
+//        armBox.addTriangle(Constants.p8, Constants.p4, Constants.p3);
+//        armBox.addTriangle(Constants.p8, Constants.p3, Constants.p7);
+
         try {
             Resources res = getResources();
             actor = BonesIO.loadGroup(res.openRawResource(R.raw.fortypolyvincent));
 
-            //world.addObject(sphere);
-            sphere.translate(new SimpleVector(-11, -44, 0));
+            world.addObject(sphere);
+            //world.addObject(armBox);
+            armBox.setRotationPivot(new SimpleVector(-18.5, -56.5, 0.965));
             actor.addToWorld(world);
 
             skeletonHelper = new SkeletonHelper(actor);
@@ -181,13 +198,13 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
                 SimpleVector[] meshVertices = myVertexController.getSourceMesh();
                 Log.d("vertStager", "verts: " + meshVertices.length);
 
-                for(int i = 0; i < meshVertices.length; i++) {
+                for(int i = 300; i < meshVertices.length; i++) {
                     sphere.setTranslationMatrix(new Matrix());
                     meshVertices[i].rotateX((float) Math.PI / 2);
                     sphere.translate(meshVertices[i].x, meshVertices[i].y, meshVertices[i].z);
 
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -356,24 +373,20 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
     }
 
-    public void handUpdate(Matrix elbowRotation) {
+    private void handUpdate(Matrix lowerArm, SimpleVector lowerArmEulers) {
 
-        SimpleVector armEulers = MyoHelper.rotMatToEuler(elbowRotation);
+        if(Math.random() < .2)
+            Log.d("Exercising", " " + lowerArmEulers);
         Matrix handRotation = new Matrix();
-
-        if(armEulers.x > Math.PI) {
-            armEulers.x -= 2*Math.PI;
-        }
-
-        handRotation.rotateX(armEulers.x * Constants.HAND_ELBOW_ROTATION_RATIO + Constants.HAND_ROTATION_OFFSET);
+        handRotation.rotateX(-lowerArmEulers.y * Constants.HAND_ELBOW_ROTATION_RATIO + Constants.HAND_ROTATION_OFFSET);
         skeletonHelper.transformJointOnPivot(Constants.RHAND_ID, handRotation);
 
     }
 
-    public void updateArm(Matrix upperArm, Matrix lowerArm) {
+    public void updateArm(Matrix upperArm, Matrix lowerArm, SimpleVector lowerArmEulers) {
 
         skeletonHelper.transformJointOnPivot(Constants.RSHOULDER_ID, upperArm);
-        handUpdate(lowerArm);
+        handUpdate(lowerArm, lowerArmEulers);
         lowerArm.matMul(upperArm.invert());
         skeletonHelper.transformJointOnPivot(Constants.RELBOW_ID, lowerArm);
 

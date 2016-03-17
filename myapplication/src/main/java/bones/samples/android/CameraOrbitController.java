@@ -24,13 +24,12 @@ public class CameraOrbitController {
 	public float minCameraRadius = 3f;
 	public float cameraMoveStepSize = 0.5f;
 
-	public float cameraHeight = -44f;
+	public float cameraHeight = -46f;
 	public float cameraHorzOffset = -11f;
 	private final SimpleVector cameraTarget = new SimpleVector(cameraHorzOffset, cameraHeight, 0);
 	
 	public float dragTurnAnglePerPixel = (float) (Math.PI / 256);
 	public float dragMovePerPixel = 1f;
-	public float cameraMovePerWheelClick = 1.1f;
 	
 	private boolean cameraMovingUp = false;
 	private boolean cameraMovingDown = false;

@@ -3,6 +3,7 @@ package com.example.chris.myapplication;
 import android.util.Log;
 
 import com.threed.jpct.Matrix;
+import com.threed.jpct.SimpleVector;
 
 import org.ros.internal.node.topic.SubscriberIdentifier;
 import org.ros.message.MessageListener;
@@ -23,17 +24,26 @@ public class MyoSubscriber implements NodeMain {
 
     private final ExerciseActivity housingActivity = ExerciseActivity.getInstance();
     private Boolean readFirstU = false;
-    private Matrix lastUpperMyoReading = new Matrix();
+    private Matrix lastUpperMyoReading = new Matrix(), lower;
+    private Matrix lExaggeration = new Matrix();
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
+
+        lExaggeration.rotateZ(-(float) Math.PI * .4f);
+
         Subscriber<geometry_msgs.Quaternion> raw_myo_l_sub = connectedNode.newSubscriber("/myo/l/ort", geometry_msgs.Quaternion._TYPE);
         raw_myo_l_sub.addMessageListener(new MessageListener<geometry_msgs.Quaternion>() {
             @Override
             public void onNewMessage(geometry_msgs.Quaternion msg) {
                 if(housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.EXERCISING) {
                     if(readFirstU) {
-                        housingActivity.updateArm(lastUpperMyoReading, MyoHelper.myoToMat(msg));
+
+
+                        lower = MyoHelper.myoToMat(msg);
+                        lower.matMul(lExaggeration);
+
+                        housingActivity.updateArm(lastUpperMyoReading, lower, MyoHelper.quatToEuler(msg));
                     }
                 }
             }
@@ -46,6 +56,7 @@ public class MyoSubscriber implements NodeMain {
                 if(housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.EXERCISING) {
                     readFirstU = true;
                     lastUpperMyoReading = MyoHelper.myoToMat(msg);
+                    lastUpperMyoReading.rotateZ(-(float) Math.PI * .2f);
                 }
             }
         });
