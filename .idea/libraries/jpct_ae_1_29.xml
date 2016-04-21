@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jpct_ae-1.29">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/myapplication/libs/jpct_ae-1.29.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

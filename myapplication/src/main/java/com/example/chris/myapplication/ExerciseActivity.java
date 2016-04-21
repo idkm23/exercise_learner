@@ -40,6 +40,7 @@ import com.threed.jpct.TextureManager;
 import com.threed.jpct.World;
 
 import org.ros.android.RosActivity;
+import org.ros.namespace.GraphName;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
 
@@ -69,15 +70,12 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
     private PowerManager.WakeLock wakeLock;
 
-    /* the rotational matrix for the shoulder, necessary to properly position the elbow with the myo */
-    Matrix RShoulderRot;
-
     /*** ROS STUFF ***/
     private MyoSubscriber myoSub;
     private StateSubscriber stateSub;
 
     public ExerciseActivity() {
-        super("exercisedetector", "exercisedetector");
+        super("exercisedetector" + GraphName.newAnonymous(), "exercisedetector");
         instance = this;
     }
 
@@ -101,9 +99,6 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
     }
 
     /*** JPCT STUFF ***/
-
-    final Object3D armBox = MyoHelper.createBox(Constants.armPoints);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Logger.log("onCreate");
@@ -141,28 +136,10 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
         world = new World();
 
-        final Object3D sphere = Primitives.getSphere(1);
-
-//        armBox.addTriangle(Constants.p1, Constants.p2, Constants.p4);
-//        armBox.addTriangle(Constants.p1, Constants.p4, Constants.p3);
-//        armBox.addTriangle(Constants.p1, Constants.p3, Constants.p7);
-//        armBox.addTriangle(Constants.p1, Constants.p7, Constants.p5);
-//        armBox.addTriangle(Constants.p1, Constants.p5, Constants.p6);
-//        armBox.addTriangle(Constants.p1, Constants.p6, Constants.p2);
-//        armBox.addTriangle(Constants.p8, Constants.p6, Constants.p5);
-//        armBox.addTriangle(Constants.p8, Constants.p5, Constants.p7);
-//        armBox.addTriangle(Constants.p8, Constants.p6, Constants.p2);
-//        armBox.addTriangle(Constants.p8, Constants.p2, Constants.p4);
-//        armBox.addTriangle(Constants.p8, Constants.p4, Constants.p3);
-//        armBox.addTriangle(Constants.p8, Constants.p3, Constants.p7);
 
         try {
             Resources res = getResources();
             actor = BonesIO.loadGroup(res.openRawResource(R.raw.fortypolyvincent));
-
-            world.addObject(sphere);
-            //world.addObject(armBox);
-            armBox.setRotationPivot(new SimpleVector(-18.5, -56.5, 0.965));
             actor.addToWorld(world);
 
             skeletonHelper = new SkeletonHelper(actor);
@@ -187,53 +164,25 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
         wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "exercisedetector");
 
         beginPlayback();
-
-        /** Finding the vertex in the vertex soup! **/
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                MyVertexController myVertexController = new MyVertexController();
-                myVertexController.init(actor.get(0).getMesh(), true);
-                SimpleVector[] meshVertices = myVertexController.getSourceMesh();
-                Log.d("vertStager", "verts: " + meshVertices.length);
-
-                for(int i = 300; i < meshVertices.length; i++) {
-                    sphere.setTranslationMatrix(new Matrix());
-                    meshVertices[i].rotateX((float) Math.PI / 2);
-                    sphere.translate(meshVertices[i].x, meshVertices[i].y, meshVertices[i].z);
-
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    Log.d("vertStager", i + " " + meshVertices[i].x + " "
-                            + meshVertices[i].y + " " + meshVertices[i].z);
-               }
-            }
-
-        });
     }
 
-    /**
-     * Puts the actor in a more natural pose
-     */
-    void initializeModelPose() {
-
-        RShoulderRot = new Matrix();
-        RShoulderRot.rotateY(-(float) Math.PI * .4f);
-        RShoulderRot.rotateZ(-.4f);
-
-        update(RShoulderRot, Constants.RSHOULDER_ID);
-        RShoulderRot = RShoulderRot.invert();
-
-        Matrix LShoulderRot = new Matrix();
-        LShoulderRot.rotateY((float) Math.PI * 4 / 11);
-
-        update(LShoulderRot, Constants.LSHOULDER_ID);
-    }
+//    /**
+//     * Puts the actor in a more natural pose
+//     */
+//    void initializeModelPose() {
+//
+//        RShoulderRot = new Matrix();
+//        RShoulderRot.rotateY(-(float) Math.PI * .4f);
+//        RShoulderRot.rotateZ(-.4f);
+//
+//        update(RShoulderRot, Constants.RSHOULDER_ID);
+//        RShoulderRot = RShoulderRot.invert();
+//
+//        Matrix LShoulderRot = new Matrix();
+//        LShoulderRot.rotateY((float) Math.PI * 4 / 11);
+//
+//        update(LShoulderRot, Constants.LSHOULDER_ID);
+//    }
 
     @Override
     protected void onPause() {
@@ -373,7 +322,7 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
     }
 
-    private void handUpdate(Matrix lowerArm, SimpleVector lowerArmEulers) {
+    private void handUpdate(SimpleVector lowerArmEulers) {
 
         if(Math.random() < .2)
             Log.d("Exercising", " " + lowerArmEulers);
@@ -386,13 +335,58 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
     public void updateArm(Matrix upperArm, Matrix lowerArm, SimpleVector lowerArmEulers) {
 
         skeletonHelper.transformJointOnPivot(Constants.RSHOULDER_ID, upperArm);
-        handUpdate(lowerArm, lowerArmEulers);
-        lowerArm.matMul(upperArm.invert());
-        skeletonHelper.transformJointOnPivot(Constants.RELBOW_ID, lowerArm);
+        //handUpdate(lowerArmEulers);
+        Matrix finalLowerArm = lowerArm.cloneMatrix();
+
+//        To try and fake the emulator to test nao stuff
+//        Matrix fakeUpperArm = new Matrix();
+
+//        fakeUpperArm.rotateY(-(float)Math.PI/2f);
+//        fakeUpperArm.rotateAxis(new SimpleVector(0, 1, 0), -MyoSubscriber.pitch);
+//        fakeUpperArm.rotateAxis(new SimpleVector(1, 0, 0), -MyoSubscriber.yaw);
+//
+//
+//        finalLowerArm.matMul(fakeUpperArm.invert());
+
+
+        finalLowerArm.matMul(upperArm.invert());
+        skeletonHelper.transformJointOnPivot(Constants.RELBOW_ID, finalLowerArm);
 
         skeletonHelper.getPose().updateTransforms();
+
+        SimpleVector L1 = skeletonHelper.getPose().getGlobal(
+                Constants.RELBOW_ID).getTranslation();
+        L1.matMul(actor.get(0).getWorldTransformation());
+        SimpleVector L2 = skeletonHelper.getPose().getGlobal(
+                Constants.RMIDDLEFINGERTIP_ID).getTranslation();
+        L2.matMul(actor.get(0).getWorldTransformation());
+
+
+        SimpleVector hit = MyoHelper.checkLineBox(Constants.q2, Constants.q7, L1, L2);
+
+        if(hit != null) {
+//            sphere.clearTranslation();
+//            sphere.translate(hit);
+
+            return;
+        }
+
         skeletonHelper.getGroup().applySkeletonPose();
         skeletonHelper.getGroup().applyAnimation();
+
+
+//        SimpleVector basePos = new SimpleVector(-17.179482,-57.893806,6.6115966),
+//            translation = pivot.calcSub(basePos);
+//        armBox.clearTranslation();
+//        armBox.translate(translation);
+//
+//        sphere.clearTranslation();
+//        sphere.translate(pivot);
+
+//        armBox.setScale(1f);
+//        armBox.setRotationPivot(pivot);
+//        armBox.setRotationMatrix(lowerArm);
+//        armBox.setScale(1f);
     }
 
     public void beginExercise() {

@@ -29,6 +29,22 @@ public class StateSubscriber implements NodeMain {
             }
         });
 
+        Subscriber<std_msgs.Int32> modeSubscriber = connectedNode.newSubscriber("/exercise/mode", std_msgs.Int32._TYPE);
+        modeSubscriber.addMessageListener(new MessageListener<std_msgs.Int32>() {
+            @Override
+            public void onNewMessage(final std_msgs.Int32 msg) {
+                switch(msg.getData()) {
+                    case 0:
+                        housingActivity.beginPlayback();
+                        break;
+
+                    case 1:
+                        housingActivity.beginExercise();
+                        break;
+                }
+            }
+        });
+
         Subscriber<std_msgs.Float64> stateChangedSubscriber = connectedNode.newSubscriber("/exercise/progress", std_msgs.Float64._TYPE);
         stateChangedSubscriber.addMessageListener(new MessageListener<std_msgs.Float64>() {
             @Override
@@ -58,23 +74,17 @@ public class StateSubscriber implements NodeMain {
     }
 
     @Override
-    public void onShutdown(Node node) {
-
-    }
+    public void onShutdown(Node node) {}
 
     @Override
-    public void onShutdownComplete(Node node) {
-
-    }
+    public void onShutdownComplete(Node node) {}
 
     @Override
-    public void onError(Node node, Throwable throwable) {
-
-    }
+    public void onError(Node node, Throwable throwable) {}
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of("exercise_state_sub");
+        return GraphName.of("exercise_state_sub").join(GraphName.newAnonymous());
     }
 
     public void clear() {
