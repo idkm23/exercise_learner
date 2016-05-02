@@ -17,7 +17,6 @@ import java.util.ArrayList;
 public class StateSubscriber implements NodeMain {
 
     private final ExerciseActivity housingActivity = ExerciseActivity.getInstance();
-    private double progress;
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
@@ -56,20 +55,7 @@ public class StateSubscriber implements NodeMain {
                     return;
                 }
 
-                progress = msg.getData();
-
-
-                housingActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        ExerciseActivity.getInstance().getTextOverlay().invalidate();
-                        if (progress == 1f) {
-                            housingActivity.completeExercise();
-                        }
-
-                    }
-                });
+                housingActivity.getPlayerStats().setProgress(msg.getData());
             }
         });
     }
@@ -86,13 +72,5 @@ public class StateSubscriber implements NodeMain {
     @Override
     public GraphName getDefaultNodeName() {
         return GraphName.of("exercise_state_sub").join(GraphName.newAnonymous());
-    }
-
-    public void clear() {
-        progress = 0;
-    }
-
-    public double getProgress() {
-        return progress;
     }
 }

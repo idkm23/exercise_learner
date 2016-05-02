@@ -51,6 +51,8 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
     }
 
     private ProgramStatus programStatus;
+
+    // Keeps track of basic stats of the particular trial, like time taken to do the exercise
     private PlayerStats playerStats = new PlayerStats();
 
     private static ExerciseActivity instance;
@@ -355,7 +357,7 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
     public void beginExercise() {
         programStatus = ProgramStatus.EXERCISING;
-        stateSub.clear();
+        playerStats.setProgress(0);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -425,7 +427,7 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
     }
 
     public void clear() {
-        stateSub.clear();
+        playerStats.setProgress(0);
         playerStats = new PlayerStats();
         txtOverlay.invalidate();
     }

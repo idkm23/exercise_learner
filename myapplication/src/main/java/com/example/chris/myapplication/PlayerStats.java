@@ -7,7 +7,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class PlayerStats {
 
+    // # of demonstrations
     private int promptCount;
+    private double progress;
     private long startTime;
     private long timeElapsed;
     private double accuracy;
@@ -39,5 +41,25 @@ public class PlayerStats {
 
     public double getAccuracy() {
         return accuracy;
+    }
+
+    public void setProgress(double p) {
+        progress = p;
+
+        ExerciseActivity.getInstance().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                ExerciseActivity.getInstance().getTextOverlay().invalidate();
+                if (progress == 1f) {
+                    ExerciseActivity.getInstance().completeExercise();
+                }
+
+            }
+        });
+    }
+
+    public double getProgress() {
+        return progress;
     }
 }

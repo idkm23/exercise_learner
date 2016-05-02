@@ -49,7 +49,7 @@ public class TextOverlay extends View {
         if(activity.getStateSub() != null) {
             paint.setColor(Color.GREEN);
             canvas.drawRect(0, getHeight() - 33 - message_height,
-                    (int) (activity.getStateSub().getProgress() * getWidth()),
+                    (int) (activity.getPlayerStats().getProgress() * getWidth()),
                     getHeight(), paint);
         }
 
