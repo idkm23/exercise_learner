@@ -39,6 +39,7 @@ public class StateSubscriber implements NodeMain {
                         break;
 
                     case 1:
+                    case 2:
                         housingActivity.beginExercise();
                         break;
                 }

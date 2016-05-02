@@ -312,16 +312,6 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
 
     }
 
-    public synchronized void update(Matrix rotation, int selector) {
-
-        skeletonHelper.transformJointOnPivot(selector, rotation);
-
-        skeletonHelper.getPose().updateTransforms();
-        skeletonHelper.getGroup().applySkeletonPose();
-        skeletonHelper.getGroup().applyAnimation();
-
-    }
-
     private void handUpdate(SimpleVector lowerArmEulers) {
 
         if(Math.random() < .2)
@@ -337,17 +327,6 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
         skeletonHelper.transformJointOnPivot(Constants.RSHOULDER_ID, upperArm);
         //handUpdate(lowerArmEulers);
         Matrix finalLowerArm = lowerArm.cloneMatrix();
-
-//        To try and fake the emulator to test nao stuff
-//        Matrix fakeUpperArm = new Matrix();
-
-//        fakeUpperArm.rotateY(-(float)Math.PI/2f);
-//        fakeUpperArm.rotateAxis(new SimpleVector(0, 1, 0), -MyoSubscriber.pitch);
-//        fakeUpperArm.rotateAxis(new SimpleVector(1, 0, 0), -MyoSubscriber.yaw);
-//
-//
-//        finalLowerArm.matMul(fakeUpperArm.invert());
-
 
         finalLowerArm.matMul(upperArm.invert());
         skeletonHelper.transformJointOnPivot(Constants.RELBOW_ID, finalLowerArm);
@@ -365,28 +344,13 @@ public class ExerciseActivity extends RosActivity implements View.OnTouchListene
         SimpleVector hit = MyoHelper.checkLineBox(Constants.q2, Constants.q7, L1, L2);
 
         if(hit != null) {
-//            sphere.clearTranslation();
-//            sphere.translate(hit);
-
+            //if the arm collides with the chest, stop the update
             return;
         }
 
         skeletonHelper.getGroup().applySkeletonPose();
         skeletonHelper.getGroup().applyAnimation();
 
-
-//        SimpleVector basePos = new SimpleVector(-17.179482,-57.893806,6.6115966),
-//            translation = pivot.calcSub(basePos);
-//        armBox.clearTranslation();
-//        armBox.translate(translation);
-//
-//        sphere.clearTranslation();
-//        sphere.translate(pivot);
-
-//        armBox.setScale(1f);
-//        armBox.setRotationPivot(pivot);
-//        armBox.setRotationMatrix(lowerArm);
-//        armBox.setScale(1f);
     }
 
     public void beginExercise() {
