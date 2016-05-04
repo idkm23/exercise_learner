@@ -1,7 +1,7 @@
 Setup
 ====
 To further develop this repository, one must have:  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Android Jellybean (API 15) because the ODG eyeglass runs this version  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Android Jellybean (API 15, because the ODG uses this version at the time this was written 5/4/2016) 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Android Studio  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- ros indigo  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- rosjava http://wiki.ros.org/rosjava/Tutorials/indigo/Source%20Installation  
