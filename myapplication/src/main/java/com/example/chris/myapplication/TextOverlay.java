@@ -13,7 +13,7 @@ import edu.uml.odgboxtherapy.R;
 import glfont.TexturePack;
 
 /**
- * Created by chris on 1/13/16.
+ * Created by Chris Munroe on 1/13/16.
  */
 public class TextOverlay extends View {
     private String onScreenMessage = "";
@@ -32,6 +32,8 @@ public class TextOverlay extends View {
         completionScreen = BitmapFactory.decodeResource(getResources(), R.drawable.ribbon_banner);
     }
 
+    // Sets the messages that describe the current stage at
+    // the top of the screen: e.g. "Now it is your turn to perform the exercise"
     public boolean setHeaderText(String msg) {
         onScreenMessage = msg;
         message_width = (int)paint.measureText(onScreenMessage);

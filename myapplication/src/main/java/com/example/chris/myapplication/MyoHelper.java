@@ -28,19 +28,6 @@ public class MyoHelper {
         return quat.getRotationMatrix();
     }
 
-    // This doesnt work correctly, sorry.
-    public static SimpleVector quatToEuler(Quaternion q) {
-        return new SimpleVector(
-                Math.atan2(2*q.y*q.w - 2*q.x*q.z, 1 - 2*q.y*q.y - 2*q.z*q.z),
-                Math.atan2(2 * q.x * q.w - 2 * q.y * q.z, 1 - 2 * q.x * q.x - 2 * q.z * q.z),
-                Math.asin(2*q.x*q.y + 2*q.z*q.w));
-    }
-
-    // Overloaded function to make ros msgs more convenient
-    public static SimpleVector quatToEuler(geometry_msgs.Quaternion q) {
-        return quatToEuler(new Quaternion((float)q.getX(), (float)q.getY(), (float)q.getZ(), (float)q.getW()));
-    }
-
     // helper function for 'checkLineBox'
     public static SimpleVector getIntersection( float fDst1, float fDst2, SimpleVector P1, SimpleVector P2) {
 

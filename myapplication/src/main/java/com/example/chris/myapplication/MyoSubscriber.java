@@ -16,7 +16,7 @@ import org.ros.node.topic.Subscriber;
 public class MyoSubscriber implements NodeMain {
 
     private final ExerciseActivity housingActivity = ExerciseActivity.getInstance();
-    private Matrix lastUpperMyoReading = new Matrix(), lastUpperMyoPlaybackReading = new Matrix(), lower;
+    private Matrix lastUpperMyoReading = new Matrix(), lastUpperMyoPlaybackReading = new Matrix();
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
@@ -55,8 +55,8 @@ public class MyoSubscriber implements NodeMain {
             @Override
             public void onNewMessage(geometry_msgs.Quaternion msg) {
                 if(housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.EXERCISING) {
-                    lower = MyoHelper.myoToMat(msg);
-                    housingActivity.updateArm(lastUpperMyoReading, lower, MyoHelper.quatToEuler(msg));
+                    Matrix lower = MyoHelper.myoToMat(msg);
+                    housingActivity.updateArm(lastUpperMyoReading, lower);
                 }
             }
         });
@@ -88,7 +88,7 @@ public class MyoSubscriber implements NodeMain {
                 if(housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.EXERCISING) {
 
                     housingActivity.beginPlayback();
-                    housingActivity.updateArm(lastUpperMyoPlaybackReading, MyoHelper.myoToMat(msg), MyoHelper.quatToEuler(msg));
+                    housingActivity.updateArm(lastUpperMyoPlaybackReading, MyoHelper.myoToMat(msg));
                 }
 
                 else if (housingActivity.getProgramStatus() == ExerciseActivity.ProgramStatus.PLAYBACK
@@ -96,7 +96,7 @@ public class MyoSubscriber implements NodeMain {
                     if(MyoHelper.isEndingQuat(msg)) {
                         housingActivity.beginExercise();
                     } else {
-                        housingActivity.updateArm(lastUpperMyoPlaybackReading, MyoHelper.myoToMat(msg), MyoHelper.quatToEuler(msg));
+                        housingActivity.updateArm(lastUpperMyoPlaybackReading, MyoHelper.myoToMat(msg));
                     }
                 }
 

@@ -1,7 +1,5 @@
 package com.example.chris.myapplication;
 
-import com.threed.jpct.Matrix;
-
 import org.ros.message.MessageListener;
 import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
@@ -9,10 +7,12 @@ import org.ros.node.Node;
 import org.ros.node.NodeMain;
 import org.ros.node.topic.Subscriber;
 
-import java.util.ArrayList;
-
 /**
- * Created by chris on 12/30/15.
+ * Created by Chris Munroe on 12/30/15.
+ * Ros subscriber for the state of the program
+ *
+ * Can control whether the program is in playback mode
+ * or practice mode
  */
 public class StateSubscriber implements NodeMain {
 
@@ -33,6 +33,7 @@ public class StateSubscriber implements NodeMain {
             @Override
             public void onNewMessage(final std_msgs.Int32 msg) {
                 switch(msg.getData()) {
+
                     case 0:
                         housingActivity.beginPlayback();
                         break;
